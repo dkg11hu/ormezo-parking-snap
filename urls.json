@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ormezo-p1",
+    "label": "Őrmező P1 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P121",
+    "maxLot": 485,
+    "useProxy": false,
+    "selector": {
+      "ending":" / 485",
+      "css": "ion-text span.e-charge-count",
+      "xpath": "//*[contains(text(),'Szabad helyek')]/following::span[contains(@class,'e-charge-count')][1]"
+    },
+    "timestampSelector": {
+      "css": "div.ion-text-right ion-text",
+      "xpath": "//*[contains(text(),'Frissítve')]/following::ion-text[1]"
+    }
+  },
+  {
+    "id": "ormezo-p2",
+    "label": "Őrmező P2 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P131",
+    "maxLot": 500,
+    "useProxy": false,
+    "selector": {
+      "ohtml":"<span class='e-charge-count '> 5 / 500 </span>",
+      "ihtml":" 5 / 500" ,
+      "ending":" / 500",
+      "css": "ion-text span.e-charge-count",
+      "xpath": "/html/body/app-root/ion-app/ion-split-pane/ion-content/div[1]/ion-router-outlet/app-parking-facility-history/ion-content/div/div[2]/div[2]/div[1]/ion-text/span"
+    },
+    "timestampSelector": {
+      "css": "div.ion-text-right ion-text",
+      "xpath": "//*[contains(text(),'Frissítve')]/following::ion-text[1]"
+    }
+  },
+  {
+    "id": "etele-p1",
+    "label": "Etele P1 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P101",
+    "maxLot": 247,
+    "useProxy": false,
+    "selector": {
+      "ending":" / 247",
+      "css": "ion-text span.e-charge-count",
+      "xpath": "//*[contains(text(),'Szabad helyek')]/following::span[contains(@class,'e-charge-count')][1]"
+    },
+    "timestampSelector": {
+      "css": "div.ion-text-right ion-text",
+      "xpath": "//*[contains(text(),'Frissítve')]/following::ion-text[1]"
+    }
+  },
+  {
+    "id": "etele-p2",
+    "label": "Etele P2 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P111",
+    "maxLot": 221,
+    "useProxy": false,
+    "selector": {
+      "ending":" / 221",
+      "css": "ion-text span.e-charge-count",
+      "xpath": "//*[contains(text(),'Szabad helyek')]/following::span[contains(@class,'e-charge-count')][1]"
+    },
+    "timestampSelector": {
+      "css": "div.ion-text-right ion-text",
+      "xpath": "//*[contains(text(),'Frissítve')]/following::ion-text[1]"
+    }
+  }
+]

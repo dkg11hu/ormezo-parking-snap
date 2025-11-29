@@ -1,0 +1,31 @@
+PORT ?= 3000
+
+.PHONY: start-service stop-service restart-service run-extractor run-extractor-verbose
+
+start-service:
+	@echo "Starting server in foreground (Ctrl+C to stop)..."
+	node server.js
+
+stop-service:
+    @echo "Finding PID listening on port $(PORT) (if any)..."
+    @lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t || true
+    @lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t | xargs -r kill || true
+
+restart-service: stop-service start-service
+
+run-extractor:
+	@echo "Running extractor and showing first 200 lines of output..."
+	@time node extractor.js 2>&1 | sed -n '1,200p' || true
+	@echo
+	@echo "Listing parking-status.json (if present):"
+	@ls -l parking-status.json || true
+	@echo
+	@echo "Show first 400 bytes of parking-status.json:"
+	@head -c 400 parking-status.json || true
+	@echo
+	@echo "Validate JSON with jq (if installed):"
+	@jq . parking-status.json | sed -n '1,40p' || true
+
+run-extractor-verbose:
+	@echo "Running extractor (verbose) ..."
+	@start=$$(date +%s); node extractor.js 2>&1 | tee extractor.log; rc=$$?; end=$$(date +%s); echo "Exit code: $$rc, duration: $$((end-start))s"; exit $$rc

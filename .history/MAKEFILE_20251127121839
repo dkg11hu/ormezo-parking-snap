@@ -1,0 +1,7 @@
+# careful: kills whatever is listening on 3000
+
+start-service:
+	node server.js
+
+stop-service:
+	sudo fuser -k 3001/tcp
