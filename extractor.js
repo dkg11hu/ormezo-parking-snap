@@ -214,17 +214,22 @@ ${rows}
 </html>`;
 
     // === Write outputs atomically ===
-    const jsonPath = path.resolve(__dirname, 'parking-status.json');
-    const jsonTmp = jsonPath + '.tmp';
-    fs.writeFileSync(jsonTmp, JSON.stringify(results, null, 2), 'utf8');
-    fs.renameSync(jsonTmp, jsonPath);
+// ensure public dir exists
+const outDir = path.resolve(__dirname, 'public');
+if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-    const htmlPath = path.resolve(__dirname, 'parking-status.html');
-    const htmlTmp = htmlPath + '.tmp';
-    fs.writeFileSync(htmlTmp, html, 'utf8');
-    fs.renameSync(htmlTmp, htmlPath);
+// write JSON and HTML into public/
+const jsonPath = path.join(outDir, 'parking-status.json');
+const jsonTmp = jsonPath + '.tmp';
+fs.writeFileSync(jsonTmp, JSON.stringify(results, null, 2), 'utf8');
+fs.renameSync(jsonTmp, jsonPath);
 
-    console.log('Generated parking-status.html and parking-status.json');
+const htmlPath = path.join(outDir, 'parking-status.html');
+const htmlTmp = htmlPath + '.tmp';
+fs.writeFileSync(htmlTmp, html, 'utf8');
+fs.renameSync(htmlTmp, htmlPath);
+
+console.log('Generated public/parking-status.html and public/parking-status.json');
   } catch (err) {
     console.error('Extractor failed:', err);
     process.exitCode = 1;
