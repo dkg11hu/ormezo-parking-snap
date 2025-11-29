@@ -2,11 +2,8 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
-const fs = require(\"fs\");
-let commit = process.env.COMMIT || null;
-try { if (!commit && fs.existsSync(\".commit\")) { commit = fs.readFileSync(\".commit\", \"utf8\").trim(); } } catch (e) {}
-console.log(\"STARTUP COMMIT:\", commit || \"<none>\");
 const { spawn } = require('child_process');
 
 // Load local env in development only
@@ -21,17 +18,6 @@ try {
     commit = fs.readFileSync('.commit', 'utf8').trim();
   }
 } catch (e) { /* ignore */ }
-
-const app = express();
-app.use(express.json());
-
-// Validate required secrets (adjust names as needed)
-const requiredEnv = ['PRIVATE_KEY', 'PUBLIC_KEY'];
-const missing = requiredEnv.filter((k) => !process.env[k]);
-if (missing.length) {
-  console.error('Missing required environment variables:', missing.join(', '));
-  process.exit(1);
-}
 
 console.log('STARTUP COMMIT:', commit || '<none>');
 
