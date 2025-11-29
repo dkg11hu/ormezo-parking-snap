@@ -110,3 +110,4 @@ GET /api/status 500 - 21077ms
 Received SIGINT, shutting down...
 Extractor finished before shutdown.
 Server listening on port 3000
+Server listening on port 3000
