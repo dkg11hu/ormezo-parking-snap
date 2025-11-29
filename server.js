@@ -8,7 +8,11 @@ const { spawn } = require('child_process');
 
 // Load local env in development only
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({ path: '.env.local' });
+  try {
+    require('dotenv').config({ path: '.env.local' });
+  } catch (e) {
+    console.warn('dotenv not available, skipping .env load');
+  }
 }
 
 // Log build commit if available
@@ -20,8 +24,51 @@ try {
 } catch (e) { /* ignore */ }
 
 console.log('STARTUP COMMIT:', commit || '<none>');
+console.log('PID:', process.pid);
 
-let extractor = null; // optional child process
+const app = express();
+app.use(express.json());
+
+// Serve static files from public/
+app.use(express.static(path.join(__dirname, 'public')));
+
+// --- extractor runner (inserted) ---
+let extractor = null;
+
+function runExtractor() {
+  if (extractor && !extractor.killed) {
+    console.log('Extractor already running, skipping new run');
+    return;
+  }
+  console.log('Spawning extractor...');
+  extractor = spawn('node', [path.join(__dirname, 'extractor.js')], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env }
+  });
+
+  extractor.stdout.on('data', (d) => console.log('[extractor]', d.toString().trim()));
+  extractor.stderr.on('data', (d) => console.error('[extractor ERR]', d.toString().trim()));
+  extractor.on('exit', (code, signal) => {
+    console.log(`extractor exited code=${code} signal=${signal}`);
+    extractor = null;
+  });
+}
+
+// Optional: run on startup if enabled via env
+if (process.env.RUN_EXTRACTOR_ON_START === '1') {
+  runExtractor();
+}
+
+// Manual trigger (protected by EXTRACTOR_SECRET header)
+app.post('/admin/run-extractor', (req, res) => {
+  const secret = req.get('x-run-secret');
+  if (process.env.EXTRACTOR_SECRET && secret !== process.env.EXTRACTOR_SECRET) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  runExtractor();
+  res.json({ started: true });
+});
+// --- end extractor runner ---
 
 // routes
 app.get('/health', (req, res) => {
@@ -29,6 +76,29 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.json({ message: 'ormezo-parking running', uptime: process.uptime() }));
+
+// Friendly endpoints for extractor output (reads public files)
+app.get('/parking-status.json', (req, res) => {
+  const p = path.join(__dirname, 'public', 'parking-status.json');
+  if (!fs.existsSync(p)) return res.status(404).json({ error: 'not ready' });
+  try {
+    const raw = fs.readFileSync(p, 'utf8');
+    return res.type('application/json').send(raw);
+  } catch (e) {
+    return res.status(500).json({ error: 'read error' });
+  }
+});
+
+app.get('/snapshot', (req, res) => {
+  const p = path.join(__dirname, 'public', 'parking-status.json');
+  if (!fs.existsSync(p)) return res.status(404).json([]);
+  try {
+    const raw = fs.readFileSync(p, 'utf8');
+    return res.json(JSON.parse(raw));
+  } catch (e) {
+    return res.status(500).json({ error: 'read error' });
+  }
+});
 
 // Bind to Render-provided port and host
 const port = process.env.PORT || 3000;
@@ -73,8 +143,3 @@ const shutdown = (signal) => {
 
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
-
-// Example: spawn a child process and forward signals
-// extractor = spawn('node', ['extractor.js'], { stdio: 'inherit' });
-// process.on('SIGINT', () => extractor && extractor.kill('SIGINT'));
-// process.on('SIGTERM', () => extractor && extractor.kill('SIGTERM'));
