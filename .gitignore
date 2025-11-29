@@ -1,5 +1,31 @@
-node_modules
+# local env
 .env
-.DS_Store
+.env.local
+
+# keys and certs
+*.pem
+*.key
+*.pub
+ormezo-parking
+ormezo-parking.pub
+
+# node
+node_modules/
 npm-debug.log
-pm2.log
+.env/
+.env.local/
+.env
+# local env
+.env
+.env.local
+
+# keys and certs
+*.pem
+*.key
+*.pub
+ormezo-parking
+ormezo-parking.pub
+
+# node
+node_modules/
+npm-debug.log

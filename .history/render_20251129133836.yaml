@@ -1,0 +1,23 @@
+# render.yaml - Render service manifest for ormezo-parking
+services:
+  - type: web
+    name: ormezo-parking
+    env: node
+    plan: free
+    region: oregon # change to your preferred region if needed
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      sizeGb: 1
+    # optional: set instance count / scaling on paid plans
+    # scale:
+    #   minInstances: 0
+    #   maxInstances: 1

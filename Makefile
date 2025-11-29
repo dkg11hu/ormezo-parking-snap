@@ -83,3 +83,9 @@ commit:
 	git branch -M main
 	git remote add origin https://github.com/dkg11hu/ormezo-parkolo-snap.git/
 	git push -u origin main
+
+deploy:
+	git add render.yaml
+	git commit -m "Add Render service manifest"
+	git push origin main
+	

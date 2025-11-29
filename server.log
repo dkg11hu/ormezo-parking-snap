@@ -1,113 +1,23 @@
-Backend API running on port 3000
-Backend API running on port 3000
-Received SIGINT, shutting down...
-Backend API running on port 3000
-Received SIGINT, shutting down...
-Backend API running on port 3000
-Extractor finished, cache updated.
-GET /api/status 200 - 710ms
-Extractor finished, cache updated.
-GET /api/status 200 - 905ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1108ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1010ms
-GET /api/status 304 - 3ms
-GET /api/status 304 - 2ms
-GET /api/status 304 - 1ms
-GET /api/status 304 - 1ms
-GET /api/status 304 - 1ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1107ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1513ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1312ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1312ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1105ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1003ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1015ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1106ms
-Extractor finished, cache updated.
-GET /api/status 200 - 916ms
-GET /api/status 200 - 202ms
-Extractor finished, cache updated.
-GET /api/status 200 - 922ms
-Extractor finished, cache updated.
-GET /api/status 200 - 905ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1107ms
-Extractor finished, cache updated.
-GET /api/status 200 - 906ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1004ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1411ms
-Extractor finished, cache updated.
-GET /api/status 200 - 1114ms
-Extractor finished, cache updated.
-GET /api/status 200 - 804ms
-GET /api/status 304 - 1ms
-GET /api/status 304 - 1ms
-GET /api/status 500 - 20028ms
-GET /api/status 200 - 1011ms
-GET /api/status 500 - 20017ms
-GET /api/status 200 - 10474ms
-GET /api/status 500 - 20019ms
-GET /api/status 500 - 20026ms
-GET /api/status 500 - 20015ms
-GET /api/status 200 - 16756ms
-GET /api/status 500 - 20015ms
-GET /api/status 500 - 20014ms
-GET /api/status 500 - 20029ms
-GET /api/status 500 - 20057ms
-GET /api/status 500 - 21587ms
-GET /api/status 500 - 20060ms
-GET /api/status 500 - 20018ms
-GET /api/status 500 - 20282ms
-GET /api/status 500 - 20536ms
-GET /api/status 500 - 70043ms
-GET /api/status 500 - 25641ms
-GET /api/status 500 - 26153ms
-GET /api/status 500 - 29922ms
-GET /api/status 500 - 21124ms
-GET /api/status 500 - 47346ms
-GET /api/status 500 - 21064ms
-GET /api/status 200 - 18499ms
-GET /api/status 500 - 20925ms
-Received SIGINT, shutting down...
-Extractor finished before shutdown.
-Backend API running on port 3000
-GET /api/status 500 - 20029ms
-GET /api/status 500 - 20012ms
-GET /api/status 500 - 20073ms
-GET /api/status 500 - 20038ms
-GET /api/status 500 - 20102ms
-GET /api/status 500 - 20028ms
-GET /api/status 500 - 20036ms
-GET /api/status 500 - 3856ms
-GET /api/status 500 - 20412ms
-GET /api/status 500 - 20047ms
-GET /api/status 500 - 20111ms
-GET /api/status 500 - 2617ms
-GET /api/status 500 - 20029ms
-GET /api/status 500 - 20405ms
-GET /api/status 500 - 12908ms
-GET /api/status 500 - 11658ms
-GET /api/status 500 - 20038ms
-GET /api/status 500 - 20597ms
-GET /api/status 500 - 21489ms
-GET /api/status 500 - 21467ms
-GET /api/status 500 - 22563ms
-GET /api/status 500 - 21385ms
-GET /api/status 500 - 5271ms
-GET /api/status 500 - 21077ms
-Received SIGINT, shutting down...
-Extractor finished before shutdown.
-Server listening on port 3000
-Server listening on port 3000
+nohup: ignoring input
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+
+Node.js v20.19.5
+Listening on 3000
+Listening on 3000

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    runtime: node
+    name: ormezo-parking
+    repo: git@github.com:dkg11hu/ormezo-parking-snap.git
+    branch: main
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true
