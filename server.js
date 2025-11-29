@@ -1,15 +1,31 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({ path: '.env.local' });
-}
+// server.js - patched version
+// Loads dotenv in development, validates required env vars,
+// exposes a JSON /health endpoint, spawns optional child process,
+// binds to Render's port, and handles graceful shutdown.
 
-const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => console.log(`Listening on ${port}`));
-
+'use strict';
 
 const express = require('express');
 const { spawn } = require('child_process');
 
+// Load local env in development only
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '.env.local' });
+}
+
 const app = express();
+
+// Optional: parse JSON bodies if you have APIs
+app.use(express.json());
+
+// Validate required secrets (adjust names as needed)
+const requiredEnv = ['PRIVATE_KEY', 'PUBLIC_KEY'];
+const missing = requiredEnv.filter((k) => !process.env[k]);
+if (missing.length) {
+  console.error('Missing required environment variables:', missing.join(', '));
+  // Exit so the service fails fast in environments without secrets
+  process.exit(1);
+}
 
 let extractor = null; // example child process if you need one
 
@@ -18,16 +34,20 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', time: new Date().toISOString() });
 });
 
-app.get('/', (req, res) => res.json({ message: 'ormezo-parking running' }));
+app.get('/', (req, res) => res.json({ message: 'ormezo-parking running', uptime: process.uptime() }));
+
+// Bind to Render-provided port and host
+const port = process.env.PORT || 3000;
+const host = '0.0.0.0';
 
 // start server once
-const server = app.listen(port, '0.0.0.0', () => {
+const server = app.listen(port, host, () => {
   console.log(`Listening on ${port}`);
 });
 
 // handle listen errors (EADDRINUSE etc.)
 server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
+  if (err && err.code === 'EADDRINUSE') {
     console.error(`Port ${port} is already in use. Exiting.`);
     process.exit(1);
   }
@@ -46,7 +66,11 @@ const shutdown = (signal) => {
     }
     // kill child if running
     if (extractor && !extractor.killed) {
-      extractor.kill('SIGINT');
+      try {
+        extractor.kill('SIGINT');
+      } catch (e) {
+        console.error('Error killing child process', e);
+      }
     }
     console.log('Server closed');
     process.exit(0);
