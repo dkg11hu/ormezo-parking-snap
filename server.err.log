@@ -1350,3 +1350,734 @@ Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documen
     '=== Processing Őrmező P2 P+R parkoló (ormezo-p2) ===\n',
   stderr: ''
 }
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26083 run=1764417572922\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26083 run=1764417572922\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26083 run=1764417572922\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26524 run=1764417613071\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26524 run=1764417613071\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26989 run=1764417648767\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=26989 run=1764417648767\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27342 run=1764417669292\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27342 run=1764417669292\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27799 run=1764417699750\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27799 run=1764417699750\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27799 run=1764417699750\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=27799 run=1764417699750\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28297 run=1764417745872\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28297 run=1764417745872\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28757 run=1764417788970\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28757 run=1764417788970\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28823 run=1764417804098\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28823 run=1764417804098\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=28823 run=1764417804098\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=29237 run=1764417841886\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=29237 run=1764417841886\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=29237 run=1764417841886\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=29701 run=1764417883199\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=29701 run=1764417883199\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=30173 run=1764417917281\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=30173 run=1764417917281\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=30585 run=1764417938355\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: 1,
+  killed: true,
+  signal: null,
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: 'EXTRACTOR START pid=30585 run=1764417938355\n' +
+    '\n' +
+    '=== Processing Őrmező P1 P+R parkoló (ormezo-p1) ===\n',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+  code: null,
+  killed: true,
+  signal: 'SIGTERM',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Extractor error: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: false,
+  signal: 'SIGINT',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: false,
+  signal: 'SIGINT',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}
+Failed to produce status: Error: Command failed: node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js
+
+    at genericNodeError (node:internal/errors:984:15)
+    at wrappedFn (node:internal/errors:538:14)
+    at ChildProcess.exithandler (node:child_process:422:12)
+    at ChildProcess.emit (node:events:524:28)
+    at maybeClose (node:internal/child_process:1104:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:524:28)
+    at Pipe.<anonymous> (node:net:343:12) {
+  code: null,
+  killed: false,
+  signal: 'SIGINT',
+  cmd: 'node /mnt/c/Users/gabor/Documents/GitHub/ormezo-parking-snap/extractor.js',
+  stdout: '',
+  stderr: ''
+}

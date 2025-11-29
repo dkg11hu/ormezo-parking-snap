@@ -76,10 +76,11 @@ status:
 	echo "  Last 40 lines of server.log (if present):"; \
 	[ -f $(LOGFILE) ] && tail -n 40 $(LOGFILE) || echo "    $(LOGFILE) not found"
 
-commit:
-	git init
-	git add .
-	git commit -m "Initial commit for Render deploy"
-	git branch -M main
-	git remote add origin https://github.com/dkg11hu/ormezo-parkolo-snap.git/
-	git push -u origin main
+	commit:
+		git init
+		git add .
+		git commit -m "Initial commit for Render deploy"
+		git branch -M main
+		git remote add origin https://github.com/dkg11hu/ormezo-parkolo-snap.git/
+		git push -u origin main
+ 

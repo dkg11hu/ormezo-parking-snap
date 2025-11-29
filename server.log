@@ -90,3 +90,23 @@ GET /api/status 500 - 20038ms
 GET /api/status 500 - 20102ms
 GET /api/status 500 - 20028ms
 GET /api/status 500 - 20036ms
+GET /api/status 500 - 3856ms
+GET /api/status 500 - 20412ms
+GET /api/status 500 - 20047ms
+GET /api/status 500 - 20111ms
+GET /api/status 500 - 2617ms
+GET /api/status 500 - 20029ms
+GET /api/status 500 - 20405ms
+GET /api/status 500 - 12908ms
+GET /api/status 500 - 11658ms
+GET /api/status 500 - 20038ms
+GET /api/status 500 - 20597ms
+GET /api/status 500 - 21489ms
+GET /api/status 500 - 21467ms
+GET /api/status 500 - 22563ms
+GET /api/status 500 - 21385ms
+GET /api/status 500 - 5271ms
+GET /api/status 500 - 21077ms
+Received SIGINT, shutting down...
+Extractor finished before shutdown.
+Server listening on port 3000
