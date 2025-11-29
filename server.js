@@ -13,6 +13,18 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: '.env.local' });
 }
 
+// log of commit 
+const fs = require('fs');
+let commit = process.env.COMMIT || null;
+try {
+  if (!commit && fs.existsSync('.commit')) {
+    commit = fs.readFileSync('.commit', 'utf8').trim();
+  }
+} catch (e) {
+  /* ignore */
+}
+console.log('STARTUP COMMIT:', commit || '<none>');
+
 const app = express();
 
 // Optional: parse JSON bodies if you have APIs
