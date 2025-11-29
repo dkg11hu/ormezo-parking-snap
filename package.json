@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "git rev-parse --short HEAD > .commit 2>/dev/null || echo '<no-git>' > .commit && echo BUILD_COMMIT: $(cat .commit) || true"
+    "postinstall": "node -e \"const fs=require('fs'); const {execSync}=require('child_process'); try{fs.writeFileSync('.commit', execSync('git rev-parse --short HEAD').toString().trim())}catch(e){fs.writeFileSync('.commit','<no-git>')} console.log('BUILD_COMMIT:', fs.readFileSync('.commit','utf8'))\""
   },
   "engines": {
     "node": "20.x"
