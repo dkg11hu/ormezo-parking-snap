@@ -1,150 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>P+R Parkoló Foglaltság</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body { font-family: sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
+    .bar { background: #eee; height: 1em; position: relative; }
+    .fill { background: #4caf50; height: 100%; }
+    .low .fill { background: #f44336; }
+    .unknown .fill { background: #999; }
+    .timestamp { font-size: 0.9em; color: #666; }
+  </style>
 </head>
 <body>
-  <div class="wrap" role="main">
-    <header>
-      <div>
-        <h1>P+R Parkoló Foglaltság</h1>
-        <div class="meta" id="last-updated">Frissítve: —</div>
-      </div>
-      <div id="controls">
-        <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
-        <div class="status" id="status">—</div>
-      </div>
-    </header>
+  <h1>P+R Parkoló Foglaltság – Frissítve: 2025-11-29 22:18:38</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Parkoló</th>
+        <th>Szabad helyek</th>
+        <th>Összes férőhely</th>
+        <th>Frissítve</th>
+      </tr>
+    </thead>
+    <tbody>
 
-    <main id="list" aria-live="polite">
-      <!-- cards injected here -->
-    </main>
+      <tr class="free">
+        <td>Őrmező P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 373/485 (76.91%)">
+            <div class="fill" style="width:76.91%"></div>
+          </div>
+          373
+        </td>
+        <td>485</td>
+        <td class="timestamp">2025-11-29 22:18:38</td>
+      </tr>
 
-    <footer>
-      Az oldal automatikusan frissül 5 percenként. Ha nem látsz friss adatot, nyomd meg a Frissít gombot.
-    </footer>
-  </div>
+      <tr class="free">
+        <td>Őrmező P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 383/500 (76.6%)">
+            <div class="fill" style="width:76.6%"></div>
+          </div>
+          383
+        </td>
+        <td>500</td>
+        <td class="timestamp">2025-11-29 22:18:38</td>
+      </tr>
 
+      <tr class="free">
+        <td>Etele P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 160/247 (64.78%)">
+            <div class="fill" style="width:64.78%"></div>
+          </div>
+          160
+        </td>
+        <td>247</td>
+        <td class="timestamp">2025-11-29 22:18:38</td>
+      </tr>
+
+      <tr class="free">
+        <td>Etele P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 172/221 (77.83%)">
+            <div class="fill" style="width:77.83%"></div>
+          </div>
+          172
+        </td>
+        <td>221</td>
+        <td class="timestamp">2025-11-29 22:18:38</td>
+      </tr>
+    </tbody>
+  </table>
   <script>
-    const API = '/parking-status.json';
-    const REFRESH_MS = 300000; // 5 minutes
-    const list = document.getElementById('list');
-    const lastUpdated = document.getElementById('last-updated');
-    const status = document.getElementById('status');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    function formatPct(free, total) {
-      if (!total) return 0;
-      return (free / total * 100);
-    }
-
-    function pctToClass(pct) {
-      // bucket into 5% steps and clamp 0..100
-      const bucket = Math.max(0, Math.min(100, Math.round(pct / 5) * 5));
-      return 'w-' + bucket;
-    }
-
-    function createCard(item) {
-      const pct = item.total ? (item.free / item.total * 100) : 0;
-      const bucketClass = pctToClass(pct);
-      const card = document.createElement('article');
-      card.className = 'card ' + bucketClass + (pct < 20 ? ' low' : '');
-      card.setAttribute('role','article');
-
-      const left = document.createElement('div');
-      left.style.flex = '1';
-
-      const label = document.createElement('div');
-      label.className = 'label';
-      label.textContent = item.label;
-
-      const barWrap = document.createElement('div');
-      barWrap.className = 'bar-wrap';
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      const fill = document.createElement('div');
-      fill.className = 'fill';
-      // width is controlled by the parent card's bucket class in CSS
-      const pctText = document.createElement('div');
-      pctText.style.minWidth = '56px';
-      pctText.style.textAlign = 'right';
-      pctText.style.fontSize = '0.9rem';
-      pctText.style.color = 'var(--muted)';
-      pctText.textContent = pct.toFixed(1) + '%';
-
-      bar.appendChild(fill);
-      barWrap.appendChild(bar);
-      barWrap.appendChild(pctText);
-
-      left.appendChild(label);
-      left.appendChild(barWrap);
-
-      const numbers = document.createElement('div');
-      numbers.className = 'numbers';
-      const count = document.createElement('div');
-      count.className = 'count';
-      count.textContent = item.free;
-      const total = document.createElement('div');
-      total.className = 'total';
-      total.textContent = '/' + item.total;
-      const ts = document.createElement('div');
-      ts.className = 'timestamp';
-      ts.textContent = item.updated;
-
-      numbers.appendChild(count);
-      numbers.appendChild(total);
-      numbers.appendChild(ts);
-
-      card.appendChild(left);
-      card.appendChild(numbers);
-
-      return card;
-    }
-
-    function render(data) {
-      data.sort((a,b) => (b.free||0) - (a.free||0));
-      list.innerHTML = '';
-      data.forEach(it => list.appendChild(createCard(it)));
-      lastUpdated.textContent = 'Frissítve: ' + (data[0]?.updated || new Date().toISOString());
-    }
-
-    async function fetchAndRender() {
-      status.textContent = 'Betöltés…';
-      refreshBtn.disabled = true;
-      try {
-        const res = await fetch(API, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Hálózati hiba');
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Váratlan formátum');
-        render(data);
-        status.textContent = 'OK';
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Hiba';
-      } finally {
-        refreshBtn.disabled = false;
-      }
-    }
-
-    // small HTML escape helper not needed because we use textContent
-
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchAndRender();
-      setInterval(fetchAndRender, REFRESH_MS);
+    const tbody = document.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+      const aVal = parseInt(a.children[1].textContent) || 0;
+      const bVal = parseInt(b.children[1].textContent) || 0;
+      return bVal - aVal;
     });
-
-    refreshBtn.addEventListener('click', fetchAndRender);
-
-    // optional pull-to-refresh helper for iOS
-    let touchStartY = 0;
-    window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; });
-    window.addEventListener('touchend', e => {
-      const dy = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY - touchStartY : 0;
-      if (dy > 80) fetchAndRender();
-    });
+    rows.forEach(r => tbody.appendChild(r));
+  </script>
+  <script>
+    setTimeout(() => location.reload(true), 300000); // reload every 5 minutes
   </script>
 </body>
 </html>

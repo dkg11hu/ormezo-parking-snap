@@ -79,7 +79,7 @@ status:
 commit:
 	git init
 	git add .
-	git commit -m "Initial commit for Render deploy"
+	git commit -m "New commit"
 	git branch -M main
 	git remote add origin https://github.com/dkg11hu/ormezo-parkolo-snap.git/
 	git push -u origin main
@@ -88,4 +88,6 @@ deploy:
 	git add render.yaml
 	git commit -m "Add Render service manifest"
 	git push origin main
-	
+
+trigger-extractor: 
+	@curl -X POST -H "x-run-secret: $$EXTRACTOR_SECRET" https://ormezo-parking-snap.onrender.com/admin/run-extractor
