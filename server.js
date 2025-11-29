@@ -1,13 +1,23 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '.env.local' });
+}
+
+const port = process.env.PORT || 3000;
+app.listen(port, '0.0.0.0', () => console.log(`Listening on ${port}`));
+
+
 const express = require('express');
 const { spawn } = require('child_process');
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 let extractor = null; // example child process if you need one
 
 // routes
-app.get('/health', (req, res) => res.send('OK'));
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
+
 app.get('/', (req, res) => res.json({ message: 'ormezo-parking running' }));
 
 // start server once
