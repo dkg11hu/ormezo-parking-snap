@@ -2,101 +2,225 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Parkoló státusz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P+R Parkoló Foglaltság</title>
+  <link rel="stylesheet" href="/styles.css" />
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 1rem; }
-    table { border-collapse: collapse; width: 100%; max-width: 900px; }
-    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; text-align: left; }
-    th { background: #fafafa; font-weight: 600; }
-    .updated { color: #666; font-size: 0.9rem; margin-top: 0.5rem; }
-    .error { color: #b00; }
+    /* minimal local styles to ensure layout if styles.css missing */
+    .wrap { max-width: 980px; margin: 0 auto; padding: 1rem; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
+    .meta { color:#666; font-size:0.95rem; }
+    #controls { display:flex; gap:0.75rem; align-items:center; }
+    button { padding:0.4rem 0.7rem; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    .status { font-size:0.95rem; color:#333; min-width:48px; text-align:center; }
+    main { display:grid; gap:0.75rem; grid-template-columns: 1fr; }
+    .card { display:flex; justify-content:space-between; align-items:center; padding:0.6rem; border-radius:8px; background:#fff; box-shadow:0 1px 0 rgba(0,0,0,0.04); }
+    .label { font-weight:600; margin-bottom:0.35rem; }
+    .bar-wrap { display:flex; gap:0.5rem; align-items:center; min-width:220px; }
+    .bar { background:#f1f3f5; height:12px; width:160px; border-radius:8px; overflow:hidden; }
+    .fill { height:100%; width:0%; background:linear-gradient(90deg,#2ea44f,#1b8f3a); transition:width 400ms ease; }
+    .numbers { text-align:right; min-width:80px; color:#333; }
+    .count { font-weight:700; }
+    .timestamp { font-size:0.85rem; color:#666; }
+    footer { margin-top:1.25rem; color:#666; font-size:0.95rem; }
+    @media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
   </style>
 </head>
 <body>
-  <h1>Parkoló státusz</h1>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>P+R Parkoló Foglaltság</h1>
+        <div class="meta" id="last-updated">Frissítve: —</div>
+      </div>
+      <div id="controls">
+        <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
+        <div class="status" id="status">—</div>
+      </div>
+    </header>
 
-  <div id="status"></div>
-  <div class="updated" id="updated"></div>
+    <main id="list" aria-live="polite">
+      <!-- cards injected here -->
+    </main>
+
+    <footer>
+      Az oldal automatikusan frissül. Ha nem látsz friss adatot, nyomd meg a Frissít gombot.
+    </footer>
+  </div>
 
   <script>
-    const JSON_URL = '/parking-status.json';
-    const POLL_INTERVAL_MS = 30000;
+    // Configuration
+    const LOCAL_JSON = '/parking-status.json';
+    const POLL_INTERVAL_MS = 30_000; // poll every 30s
+    const FALLBACK_REFRESH_MS = 300_000; // 5 minutes fallback
 
-    function renderList(data) {
-      if (!Array.isArray(data) || data.length === 0) {
-        document.getElementById('status').innerHTML = '<p>Nincs adat.</p>';
-        return;
-      }
-      const rows = data.map(item => `
-        <tr>
-          <td><strong>${escapeHtml(item.label)}</strong></td>
-          <td>${escapeHtml(String(item.free))} / ${escapeHtml(String(item.total))}</td>
-          <td>${escapeHtml(item.updated || '')}</td>
-        </tr>
-      `).join('');
-      document.getElementById('status').innerHTML = `
-        <table>
-          <thead><tr><th>Parkoló</th><th>Szabad / Összes</th><th>Frissítve</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
-    }
+    // DOM refs
+    const list = document.getElementById('list');
+    const lastUpdated = document.getElementById('last-updated');
+    const status = document.getElementById('status');
+    const refreshBtn = document.getElementById('refreshBtn');
 
-    function setUpdated(text) {
-      document.getElementById('updated').textContent = text || '';
-    }
-
-    function showError(msg) {
-      document.getElementById('status').innerHTML = '<p class="error">' + escapeHtml(msg) + '</p>';
-      setUpdated('');
-    }
-
-    function escapeHtml(s) {
-      return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    async function init() {
-      try {
-        const initial = await fetchJson(JSON_URL);
-        renderList(initial);
-        const latest = initial && initial[0] && initial[0].updated;
-        setUpdated(latest ? 'Utolsó frissítés: ' + latest : '');
-      } catch (err) {
-        showError('Nem sikerült betölteni az induló adatot.');
-        console.error('initial load error', err);
-      }
-      startPolling();
-    }
-
+    // State
+    let lastJsonRaw = null;
     let pollTimer = null;
-    function startPolling() {
-      if (pollTimer) return;
-      pollTimer = setInterval(async () => {
-        try {
-          const data = await fetchJson(JSON_URL + '?t=' + Date.now());
-          renderList(data);
-          const latest = data && data[0] && data[0].updated;
-          setUpdated(latest ? 'Utolsó frissítés: ' + latest : '');
-        } catch (err) {
-          console.error('poll error', err);
-          setUpdated('Hiba a frissítés során. Utolsó sikeres frissítés: ' + (document.getElementById('updated').textContent || 'ismeretlen'));
-        }
-      }, POLL_INTERVAL_MS);
+
+    // Helpers
+    function pctToClass(pct) {
+      const bucket = Math.max(0, Math.min(100, Math.round(pct / 5) * 5));
+      return 'w-' + bucket;
     }
 
-    async function fetchJson(url) {
+    function createCard(item) {
+      const pct = item.total ? (item.free / item.total * 100) : 0;
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('role','article');
+
+      const left = document.createElement('div');
+      left.style.flex = '1';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = item.label;
+
+      const barWrap = document.createElement('div');
+      barWrap.className = 'bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const fill = document.createElement('div');
+      fill.className = 'fill';
+      fill.style.width = (item.total ? ((item.free / item.total) * 100) : 0) + '%';
+
+      const pctText = document.createElement('div');
+      pctText.style.minWidth = '56px';
+      pctText.style.textAlign = 'right';
+      pctText.style.fontSize = '0.9rem';
+      pctText.style.color = 'var(--muted, #666)';
+      pctText.textContent = (item.total ? ((item.free / item.total) * 100).toFixed(1) : '0.0') + '%';
+
+      bar.appendChild(fill);
+      barWrap.appendChild(bar);
+      barWrap.appendChild(pctText);
+
+      left.appendChild(label);
+      left.appendChild(barWrap);
+
+      const numbers = document.createElement('div');
+      numbers.className = 'numbers';
+      const count = document.createElement('div');
+      count.className = 'count';
+      count.textContent = item.free;
+      const total = document.createElement('div');
+      total.className = 'total';
+      total.textContent = '/' + item.total;
+      const ts = document.createElement('div');
+      ts.className = 'timestamp';
+      ts.textContent = item.updated || '';
+
+      numbers.appendChild(count);
+      numbers.appendChild(total);
+      numbers.appendChild(ts);
+
+      card.appendChild(left);
+      card.appendChild(numbers);
+
+      return card;
+    }
+
+    function render(data) {
+      data.sort((a,b) => (b.free||0) - (a.free||0));
+      list.innerHTML = '';
+      data.forEach(it => list.appendChild(createCard(it)));
+      lastUpdated.textContent = 'Frissítve: ' + (data[0]?.updated || new Date().toISOString());
+    }
+
+    async function fetchJsonRaw(url) {
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
+      const raw = await res.text();
+      let json;
+      try { json = JSON.parse(raw); } catch (e) { throw new Error('JSON parse error'); }
+      return { raw, json };
     }
 
-    init();
+    async function loadInitialFromLocal() {
+      status.textContent = 'Betöltés…';
+      refreshBtn.disabled = true;
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON);
+        lastJsonRaw = raw;
+        if (!Array.isArray(json)) throw new Error('Váratlan formátum');
+        render(json);
+        status.textContent = 'OK';
+      } catch (err) {
+        console.error('initial load error', err);
+        status.textContent = 'Hiba';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    async function pollLocalJson() {
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        if (raw !== lastJsonRaw) {
+          lastJsonRaw = raw;
+          if (Array.isArray(json)) {
+            render(json);
+            status.textContent = 'OK';
+          } else {
+            console.warn('polled JSON not array, skipping render');
+          }
+        }
+      } catch (err) {
+        console.error('poll error', err);
+        status.textContent = 'Hiba';
+      }
+    }
+
+    function startPolling() {
+      if (pollTimer) return;
+      // immediate poll then interval
+      pollLocalJson().catch(() => {});
+      pollTimer = setInterval(pollLocalJson, POLL_INTERVAL_MS);
+    }
+
+    async function manualRefresh() {
+      status.textContent = 'Frissítés…';
+      refreshBtn.disabled = true;
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        lastJsonRaw = raw;
+        if (Array.isArray(json)) {
+          render(json);
+          status.textContent = 'OK';
+        } else {
+          status.textContent = 'Hiba';
+        }
+      } catch (err) {
+        console.error('manual refresh error', err);
+        status.textContent = 'Hiba';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadInitialFromLocal();
+      startPolling();
+      // keep fallback periodic refresh for resilience
+      setInterval(manualRefresh, FALLBACK_REFRESH_MS);
+    });
+
+    refreshBtn.addEventListener('click', manualRefresh);
+
+    // optional pull-to-refresh for touch devices
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; });
+    window.addEventListener('touchend', e => {
+      const dy = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY - touchStartY : 0;
+      if (dy > 80) manualRefresh();
+    });
   </script>
 </body>
 </html>
