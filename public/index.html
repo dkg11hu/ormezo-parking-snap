@@ -4,9 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" sizes="64x64" href="/icons/favicon-64.png" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <title>P+R Parkoló Foglaltság</title>
   <link rel="stylesheet" href="/styles.css" />
-  
 </head>
 <body>
   <div class="wrap" role="main">
@@ -15,22 +19,31 @@
         <h1>P+R Parkoló Foglaltság</h1>
         <div class="meta" id="last-updated">Frissítve: —</div>
       </div>
+
       <div id="controls">
         <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
-        <div class="status" id="status">—</div>
+        <div class="status" id="status" aria-hidden="true">—</div>
       </div>
     </header>
 
-    <!-- optional overall occupancy bar -->
-    <div class="overall-status" aria-hidden="false">
-      <div>
-        <strong>Összesített kihasználtság</strong>
-        <div id="overall-percent">—</div>
+    <!-- overall free-space bar -->
+    <div class="overall-status" aria-live="polite" role="region" aria-label="Szabad helyek összesítve">
+      <div class="overall-header">
+        <strong id="overall-title" class="overall-title">Szabad helyek összesítve</strong>
+        <div id="overall-percent" class="overall-percent">—</div>
       </div>
-      <div class="status-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="">
+
+      <div id="status-track"
+           class="status-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="0"
+           aria-labelledby="overall-title">
         <div id="status-fill" class="status-fill"></div>
       </div>
-      <div id="overall-note"></div>
+
+      <div id="overall-note" class="overall-note" aria-hidden="false"></div>
     </div>
 
     <main id="list" aria-live="polite">
@@ -45,8 +58,8 @@
   <script>
     // Configuration
     const LOCAL_JSON = '/parking-status.json';
-    const POLL_INTERVAL_MS = 30_000; // 30s
-    const FALLBACK_REFRESH_MS = 300_000; // 5min
+    const POLL_INTERVAL_MS = 30_000;      // poll every 30s
+    const FALLBACK_REFRESH_MS = 300_000;  // 5 minutes fallback
 
     // DOM refs
     const list = document.getElementById('list');
@@ -56,6 +69,7 @@
     const overallPercent = document.getElementById('overall-percent');
     const statusFill = document.getElementById('status-fill');
     const overallNote = document.getElementById('overall-note');
+    const statusTrack = document.getElementById('status-track');
 
     // State
     let lastJsonRaw = null;
@@ -63,7 +77,7 @@
 
     // Helpers
     function createCard(item) {
-      const pct = item.total ? (item.free / item.total * 100) : 0;
+      const freePct = item.total ? (item.free / item.total * 100) : 0;
       const card = document.createElement('article');
       card.className = 'card';
       card.setAttribute('role','article');
@@ -81,11 +95,11 @@
       bar.className = 'bar';
       const fill = document.createElement('div');
       fill.className = 'fill';
-      fill.style.width = (item.total ? ((item.free / item.total) * 100) : 0) + '%';
+      fill.style.width = freePct + '%';
 
       const pctText = document.createElement('div');
       pctText.className = 'pct';
-      pctText.textContent = (item.total ? ((item.free / item.total) * 100).toFixed(1) : '0.0') + '%';
+      pctText.textContent = freePct.toFixed(1) + '%';
 
       bar.appendChild(fill);
       barWrap.appendChild(bar);
@@ -129,19 +143,24 @@
         overallPercent.textContent = '—';
         statusFill.style.width = '0%';
         overallNote.textContent = '';
+        if (statusTrack) statusTrack.setAttribute('aria-valuenow', '0');
         return;
       }
+
       let totalSpaces = 0, totalFree = 0;
       for (const p of data) {
         totalSpaces += Number(p.total) || 0;
         totalFree += Number(p.free) || 0;
       }
-      const occupied = Math.max(0, totalSpaces - totalFree);
-      const percent = totalSpaces > 0 ? Math.round((occupied / totalSpaces) * 100) : 0;
-      overallPercent.textContent = percent + '%';
-      statusFill.style.width = percent + '%';
+
+      const percentFree = totalSpaces > 0 ? Math.round((totalFree / totalSpaces) * 100) : 0;
+
+      overallPercent.textContent = percentFree + '%';
+      statusFill.style.width = percentFree + '%';
+      if (statusTrack) statusTrack.setAttribute('aria-valuenow', String(percentFree));
+
       const latest = data.reduce((a,b) => (a && a > (b.updated||'') ? a : (b.updated||'')), '');
-      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${occupied} • Utolsó: ${latest || 'ismeretlen'}`;
+      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${Math.max(0, totalSpaces - totalFree)} • Utolsó: ${latest || 'ismeretlen'}`;
     }
 
     async function fetchJsonRaw(url) {
@@ -178,6 +197,8 @@
           if (Array.isArray(json)) {
             render(json);
             status.textContent = 'OK';
+          } else {
+            console.warn('polled JSON not array, skipping render');
           }
         }
       } catch (err) {
