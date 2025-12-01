@@ -6,8 +6,7 @@ const path = require('path');
 const express = require('express');
 const { spawn } = require('child_process');
 
-const incoming = (req.get('x-run-secret') || '').trim();
-console.log(`[admin] incoming x-run-secret: ${incoming ? incoming.slice(0,4) + '...' : 'none'}`);
+// NOTE: removed top-level req usage
 
 
 // Load local env in development only
@@ -66,8 +65,7 @@ if (process.env.RUN_EXTRACTOR_ON_START === '1') {
 // server.js — replace your existing /admin/run-extractor handler with this
 app.post('/admin/run-extractor', async (req, res) => {
   // Masked debug: logs only first 4 chars if header present
-  const incoming = (req.get('x-run-secret') || '').trim();
-  console.log(`[admin] incoming x-run-secret: ${incoming ? incoming.slice(0,4) + '...' : 'none'}`);
+// NOTE: removed top-level req usage
 
   const expected = process.env.EXTRACTOR_SECRET || '';
   if (!incoming || incoming !== expected) {
