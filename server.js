@@ -63,20 +63,19 @@ if (process.env.RUN_EXTRACTOR_ON_START === '1') {
   runExtractor();
 }
 
-// Manual trigger (protected by EXTRACTOR_SECRET header)
+// server.js — replace your existing /admin/run-extractor handler with this
 app.post('/admin/run-extractor', async (req, res) => {
   // Masked debug: logs only first 4 chars if header present
   const incoming = (req.get('x-run-secret') || '').trim();
   console.log(`[admin] incoming x-run-secret: ${incoming ? incoming.slice(0,4) + '...' : 'none'}`);
 
-  // Normal secret check (example)
   const expected = process.env.EXTRACTOR_SECRET || '';
   if (!incoming || incoming !== expected) {
     return res.status(403).json({ error: 'forbidden' });
   }
 
-  // Start extractor (your existing logic goes here)
   try {
+    // your existing extractor logic here, for example:
     // await runExtractor();
     return res.json({ started: true });
   } catch (err) {
@@ -84,6 +83,7 @@ app.post('/admin/run-extractor', async (req, res) => {
     return res.status(500).json({ error: 'failed' });
   }
 });
+
 // --- end extractor runner ---
 
 // routes
