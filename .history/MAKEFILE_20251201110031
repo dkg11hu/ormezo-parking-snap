@@ -14,13 +14,13 @@ start-service:
 stop-service:
 	@echo "Stopping server on port $(PORT) ..."
 	@if [ -f "$(PIDFILE)" ]; then \
-		PID=$$(cat $(PIDFILE)); \
-		echo "Killing PID $$PID"; \
-		kill $$PID && rm -f $(PIDFILE) || (echo "Failed to kill $$PID"; exit 1); \
+	PID=$$(cat $(PIDFILE)); \
+	echo "Killing PID $$PID"; \
+	kill $$PID && rm -f $(PIDFILE) || (echo "Failed to kill $$PID"; exit 1); \
 	else \
-		echo "No PID file; falling back to lsof lookup"; \
-		lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t || true; \
-		lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t | xargs -r kill || true; \
+	echo "No PID file; falling back to lsof lookup"; \
+	lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t || true; \
+	lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t | xargs -r kill || true; \
 	fi
 
 restart-service: stop-service start-service
@@ -90,5 +90,5 @@ deploy:
 	git push origin main
 
 trigger-extractor: 
-#	@curl -X POST -H "x-run-secret: $EXTRACTOR_SECRET" https://ormezo-parking-snap.onrender.com/admin/run-extractor
+	@curl -X POST -H "x-run-secret: $EXTRACTOR_SECRET" https://ormezo-parking-snap.onrender.com/admin/run-extractor
 	@curl -X POST -H "x-run-secret: 4a2bcfc3ffaf4d8a143a4c6666232f43" https://ormezo-parking-snap.onrender.com/admin/run-extractor

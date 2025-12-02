@@ -10,67 +10,7 @@
   <link rel="apple-touch-icon" sizes="64x64" href="/icons/favicon-64.png" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <title>P+R Parkoló Foglaltság</title>
-
-  <style>
-    /* Basic layout */
-    :root {
-      --bg: #fff;
-      --text: #111;
-      --muted: #666;
-      --accent: #1b8f3b;
-      --danger: #d32f2f;
-      --track-bg: #eee;
-      --fill-bg: #1b8f3b;
-      --card-bg: #fff;
-      --card-border: #e6e6e6;
-    }
-    html,body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; color:var(--text); background:var(--bg); }
-    .wrap { max-width:900px; margin:0 auto; padding:1rem; }
-    header { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
-    h1 { margin:0; font-size:1.25rem; }
-    .meta { color:var(--muted); font-size:0.95rem; margin-top:0.25rem; }
-    #controls { display:flex; gap:0.5rem; align-items:center; }
-    button { padding:0.4rem 0.7rem; border-radius:6px; border:1px solid #ddd; background:#fafafa; cursor:pointer; }
-    button:disabled { opacity:0.6; cursor:default; }
-
-    .overall-status { margin-bottom:1rem; }
-    .overall-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
-    .overall-title { font-size:1rem; }
-    .overall-percent { font-weight:700; color:var(--muted); }
-
-    .status-track { height:12px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
-    .status-fill { height:100%; background:var(--fill-bg); width:0%; transition:width 300ms ease; }
-
-    .overall-note { margin-top:0.5rem; color:var(--muted); font-size:0.95rem; }
-
-    main#list { display:grid; gap:0.75rem; margin-bottom:1rem; }
-
-    .card { display:flex; justify-content:space-between; align-items:center; padding:0.6rem; border:1px solid var(--card-border); border-radius:8px; background:var(--card-bg); }
-    .left { display:flex; flex-direction:column; gap:0.5rem; min-width:0; }
-    .label { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .bar-wrap { display:flex; align-items:center; gap:0.5rem; }
-    .bar { width:220px; max-width:40vw; height:10px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
-    .fill { height:100%; background:var(--fill-bg); width:0%; transition:width 300ms ease; }
-    .pct { font-size:0.85rem; color:var(--muted); min-width:48px; text-align:right; }
-
-    .numbers { display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem; min-width:6rem; }
-    .count { font-weight:700; font-size:1.1rem; }
-    .total { color:var(--muted); }
-    .timestamp { color:var(--muted); font-size:0.85rem; text-align:right; }
-
-    footer { color:var(--muted); font-size:0.9rem; text-align:center; margin-top:1rem; }
-
-    /* overall summary styles requested */
-    .overall-summary { display:flex; gap:1rem; align-items:center; font-weight:600; }
-    .overall-summary .free { color:var(--accent); }
-    .overall-summary .occupied { color:var(--danger); }
-    .overall-meta { margin-top:0.25rem; color:var(--muted); font-weight:400; font-size:0.95rem; }
-
-    @media (max-width:520px) {
-      .bar { width:140px; }
-      .numbers { min-width:5rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <div class="wrap" role="main">
@@ -86,13 +26,20 @@
       </div>
     </header>
 
+    <!-- overall free-space bar -->
     <div class="overall-status" aria-live="polite" role="region" aria-label="Szabad helyek összesítve">
       <div class="overall-header">
         <strong id="overall-title" class="overall-title">Szabad helyek összesítve</strong>
         <div id="overall-percent" class="overall-percent">—</div>
       </div>
 
-      <div id="status-track" class="status-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="overall-title">
+      <div id="status-track"
+           class="status-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="0"
+           aria-labelledby="overall-title">
         <div id="status-fill" class="status-fill"></div>
       </div>
 
@@ -164,28 +111,35 @@
       return `${years} év`;
     }
 
+    // Convert the neutral diff string into Hungarian "X perccel ezelőtt" style.
     function hungarianAgo(diffStr) {
       if (!diffStr) return '';
       if (diffStr === 'most') return 'most';
+      // seconds -> "X másodperccel ezelőtt"
       if (diffStr.endsWith(' mp')) {
         const n = diffStr.replace(' mp', '');
         return `${n} másodperccel ezelőtt`;
       }
+      // minutes -> "X perccel ezelőtt"
       if (diffStr.endsWith(' perc')) {
         const n = diffStr.replace(' perc', '');
         return `${n} perccel ezelőtt`;
       }
+      // hours with optional minutes -> "X órával Y perccel ezelőtt" or "X órával ezelőtt"
       if (diffStr.includes(' óra')) {
         const parts = diffStr.split(' óra');
         const hours = parts[0].trim();
-        const rest = parts[1].trim();
+        const rest = parts[1].trim(); // either "" or " Y perc"
         if (!rest) return `${hours} órával ezelőtt`;
+        const minutesPart = rest.replace(' ', '').replace('perc','').replace(':','').trim();
+        // fallback: if rest contains number of minutes
         const minutesMatch = rest.match(/(\d+)\s*perc/);
         if (minutesMatch) {
           return `${hours} órával ${minutesMatch[1]} perccel ezelőtt`;
         }
         return `${hours} órával ezelőtt`;
       }
+      // days/months/years -> append " ezelőtt"
       return `${diffStr} ezelőtt`;
     }
 
@@ -241,17 +195,21 @@
       const ts = document.createElement('div');
       ts.className = 'timestamp';
 
+      // Determine timestamps
       const srcRaw = item.source_updated || item.updated || null;
       const fetchedRaw = item.fetched_at || item.fetchedAt || null;
 
+      // If fetched_at missing, assume it was fetched at refreshTime
       const fetchedDate = parseToDate(fetchedRaw) || refreshTime || new Date();
       const srcDate = parseToDate(srcRaw);
 
+      // Build relative strings
       const now = refreshTime || new Date();
       const diffFetchedSource = srcDate ? timeDiffString(fetchedDate, srcDate) : null;
       const srcRelative = diffFetchedSource ? hungarianAgo(diffFetchedSource) : null;
 
-      // Show only relative source age like "58 perccel ezelőtt"
+      // We will NOT show the absolute fetched timestamp in the card (user requested to remove it).
+      // Show only the source relative age like "58 perccel ezelőtt".
       ts.textContent = srcRelative ? srcRelative : '';
 
       numbers.appendChild(count);
@@ -288,9 +246,11 @@
       normalized.sort((a,b) => (b.free||0) - (a.free||0));
       list.innerHTML = '';
 
+      // capture refresh time once so all cards compute diffs against the same moment
       const refreshTime = new Date();
 
       normalized.forEach(it => list.appendChild(createCard(it, refreshTime)));
+      // Header "Frissítve" should show the refresh time (server write time)
       lastUpdated.textContent = 'Frissítve: ' + refreshTime.toLocaleString();
       updateOverallStatus(normalized, refreshTime);
     }
@@ -299,7 +259,7 @@
       if (!Array.isArray(data) || data.length === 0) {
         overallPercent.textContent = '—';
         statusFill.style.width = '0%';
-        overallNote.innerHTML = '';
+        overallNote.textContent = '';
         if (statusTrack) statusTrack.setAttribute('aria-valuenow', '0');
         return;
       }
@@ -310,13 +270,13 @@
         totalFree += Number(p.free) || 0;
       }
 
-      const totalOccupied = Math.max(0, totalSpaces - totalFree);
       const percentFree = totalSpaces > 0 ? Math.round((totalFree / totalSpaces) * 100) : 0;
 
       overallPercent.textContent = percentFree + '%';
       statusFill.style.width = percentFree + '%';
       if (statusTrack) statusTrack.setAttribute('aria-valuenow', String(percentFree));
 
+      // Determine latest fetched_at among items (or fallback to refreshTime)
       let latestFetched = null;
       for (const it of data) {
         const d = parseToDate(it.fetched_at || it.fetchedAt);
@@ -324,18 +284,14 @@
       }
       if (!latestFetched) latestFetched = refreshTime || new Date();
 
-      const latestDisplay = latestFetched ? latestFetched.toLocaleString() : (refreshTime || new Date()).toLocaleString();
+      const latestDisplay = formatForDisplay(latestFetched.toISOString());
+      const diff = timeDiffString(refreshTime || new Date(), latestFetched);
+      const diffHung = hungarianAgo(diff);
 
-      overallNote.innerHTML = `
-        <div class="overall-summary">
-          <div class="free">Szabad: ${totalFree}</div>
-          <div class="occupied">Foglalt: ${totalOccupied}</div>
-        </div>
-        <div class="overall-meta">Utolsó rögzítés: ${latestDisplay}</div>
-      `;
+      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${Math.max(0, totalSpaces - totalFree)} • Utolsó rögzítés: ${latestDisplay} (${diffHung})`;
     }
 
-    // fetch helpers
+    // --- robust fetch with timeout and optional fallback ---
     function fetchWithTimeout(resource, options = {}) {
       const { timeout = 8000 } = options;
       const controller = new AbortController();

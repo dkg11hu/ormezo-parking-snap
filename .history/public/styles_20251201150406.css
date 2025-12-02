@@ -62,20 +62,3 @@ footer{margin-top:14px;color:var(--muted);font-size:0.9rem;text-align:center}
 @media (prefers-reduced-motion:reduce){
   .fill,.status-fill{transition:none!important}
 }
-
-/* styles.css vagy <style> a head-ben */
-.overall-summary {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  font-weight: 600;
-}
-.overall-summary .free { color: #1b8f3b; }   /* zöld */
-.overall-summary .occupied { color: #d32f2f; } /* piros */
-.overall-meta {
-  margin-top: 0.25rem;
-  color: #555;
-  font-weight: 400;
-  font-size: 0.95rem;
-}
-

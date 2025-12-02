@@ -2,29 +2,29 @@
   {
     "id": "ormezo-p1",
     "label": "Őrmező P1 P+R parkoló",
-    "free": 353,
+    "free": 273,
     "total": 485,
-    "updated": "2025-11-29 21:36:43"
+    "updated": "2025-12-02 19:18:48"
   },
   {
     "id": "ormezo-p2",
     "label": "Őrmező P2 P+R parkoló",
-    "free": 366,
+    "free": 262,
     "total": 500,
-    "updated": "2025-11-29 21:36:43"
+    "updated": "2025-12-02 19:18:48"
   },
   {
     "id": "etele-p1",
     "label": "Etele P1 P+R parkoló",
-    "free": 147,
+    "free": 117,
     "total": 247,
-    "updated": "2025-11-29 21:36:43"
+    "updated": "2025-12-02 19:18:48"
   },
   {
     "id": "etele-p2",
     "label": "Etele P2 P+R parkoló",
-    "free": 166,
+    "free": 149,
     "total": 221,
-    "updated": "2025-11-29 21:36:43"
+    "updated": "2025-12-02 19:19:50"
   }
 ]

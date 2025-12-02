@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>P+R Parkoló Foglaltság</title>
+  <style>
+    body { font-family: sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
+    .bar { background: #eee; height: 1em; position: relative; }
+    .fill { background: #4caf50; height: 100%; }
+    .low .fill { background: #f44336; }
+    .unknown .fill { background: #999; }
+    .timestamp { font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>P+R Parkoló Foglaltság – Frissítve: 2025-12-02 19:19:50</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Parkoló</th>
+        <th>Szabad helyek</th>
+        <th>Összes férőhely</th>
+        <th>Frissítve</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="free">
+        <td>Őrmező P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 273/485 (56.29%)">
+            <div class="fill" style="width:56.29%"></div>
+          </div>
+          273
+        </td>
+        <td>485</td>
+        <td class="timestamp">2025-12-02 19:18:48</td>
+      </tr>
+
+      <tr class="free">
+        <td>Őrmező P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 262/500 (52.4%)">
+            <div class="fill" style="width:52.4%"></div>
+          </div>
+          262
+        </td>
+        <td>500</td>
+        <td class="timestamp">2025-12-02 19:18:48</td>
+      </tr>
+
+      <tr class="free">
+        <td>Etele P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 117/247 (47.37%)">
+            <div class="fill" style="width:47.37%"></div>
+          </div>
+          117
+        </td>
+        <td>247</td>
+        <td class="timestamp">2025-12-02 19:18:48</td>
+      </tr>
+
+      <tr class="free">
+        <td>Etele P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 149/221 (67.42%)">
+            <div class="fill" style="width:67.42%"></div>
+          </div>
+          149
+        </td>
+        <td>221</td>
+        <td class="timestamp">2025-12-02 19:19:50</td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    const tbody = document.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+      const aVal = parseInt(a.children[1].textContent) || 0;
+      const bVal = parseInt(b.children[1].textContent) || 0;
+      return bVal - aVal;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  </script>
+  <script>
+    setTimeout(() => location.reload(true), 300000); // reload every 5 minutes
+  </script>
+</body>
+</html>

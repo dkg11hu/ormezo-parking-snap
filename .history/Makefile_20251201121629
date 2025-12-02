@@ -12,8 +12,8 @@ start-service:
 
 # Stop by PID file if present, otherwise fall back to lsof
 stop-service:
-	@echo "Stopping server on port $(PORT) ..."
-	@if [ -f "$(PIDFILE)" ]; then \
+	echo "Stopping server on port $(PORT) ..."
+	if [ -f "$(PIDFILE)" ]; then \
 		PID=$$(cat $(PIDFILE)); \
 		echo "Killing PID $$PID"; \
 		kill $$PID && rm -f $(PIDFILE) || (echo "Failed to kill $$PID"; exit 1); \
