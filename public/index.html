@@ -72,7 +72,7 @@
     const statusTrack = document.getElementById('status-track');
 
     // State
-    let lastJsonRaw = null;
+    let lastSignature = null;
     let pollTimer = null;
 
     // Helpers
@@ -113,12 +113,13 @@
       const count = document.createElement('div');
       count.className = 'count';
       count.textContent = item.free;
+      count.setAttribute('aria-label', item.free + ' szabad hely');
       const total = document.createElement('div');
       total.className = 'total';
       total.textContent = '/' + item.total;
       const ts = document.createElement('div');
       ts.className = 'timestamp';
-      ts.textContent = item.updated || '';
+      ts.textContent = item.updated ? new Date(item.updated).toLocaleString() : '';
 
       numbers.appendChild(count);
       numbers.appendChild(total);
@@ -130,12 +131,34 @@
       return card;
     }
 
+    function normalizeUpdated(ts) {
+      if (!ts) return '';
+      // If already ISO-like, return as-is
+      if (ts.includes('T') || ts.endsWith('Z')) return ts;
+      // Convert "YYYY-MM-DD HH:MM:SS" -> "YYYY-MM-DDTHH:MM:SSZ"
+      // Note: this assumes the source timestamp is UTC or already normalized by extractor.
+      return ts.replace(' ', 'T') + 'Z';
+    }
+
+    function makeSignature(json) {
+      if (!Array.isArray(json)) return '';
+      return json
+        .slice()
+        .map(it => ({ ...it, updated: normalizeUpdated(it.updated) }))
+        .sort((a,b) => (a.id || '').localeCompare(b.id || ''))
+        .map(it => `${it.id}|${it.free}|${it.total}|${it.updated || ''}`)
+        .join('||');
+    }
+
     function render(data) {
-      data.sort((a,b) => (b.free||0) - (a.free||0));
+      // normalize updated fields for display
+      const normalized = data.map(it => ({ ...it, updated: normalizeUpdated(it.updated) }));
+      normalized.sort((a,b) => (b.free||0) - (a.free||0));
       list.innerHTML = '';
-      data.forEach(it => list.appendChild(createCard(it)));
-      lastUpdated.textContent = 'Frissítve: ' + (data[0]?.updated || new Date().toISOString());
-      updateOverallStatus(data);
+      normalized.forEach(it => list.appendChild(createCard(it)));
+      const latest = normalized[0]?.updated ? new Date(normalized[0].updated).toLocaleString() : new Date().toLocaleString();
+      lastUpdated.textContent = 'Frissítve: ' + latest;
+      updateOverallStatus(normalized);
     }
 
     function updateOverallStatus(data) {
@@ -160,7 +183,7 @@
       if (statusTrack) statusTrack.setAttribute('aria-valuenow', String(percentFree));
 
       const latest = data.reduce((a,b) => (a && a > (b.updated||'') ? a : (b.updated||'')), '');
-      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${Math.max(0, totalSpaces - totalFree)} • Utolsó: ${latest || 'ismeretlen'}`;
+      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${Math.max(0, totalSpaces - totalFree)} • Utolsó: ${latest ? new Date(latest).toLocaleString() : 'ismeretlen'}`;
     }
 
     async function fetchJsonRaw(url) {
@@ -177,7 +200,7 @@
       refreshBtn.disabled = true;
       try {
         const { raw, json } = await fetchJsonRaw(LOCAL_JSON);
-        lastJsonRaw = raw;
+        lastSignature = makeSignature(json);
         if (!Array.isArray(json)) throw new Error('Váratlan formátum');
         render(json);
         status.textContent = 'OK';
@@ -191,9 +214,12 @@
 
     async function pollLocalJson() {
       try {
+        console.log('[poll] fetching parking-status.json', new Date().toISOString());
         const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
-        if (raw !== lastJsonRaw) {
-          lastJsonRaw = raw;
+        console.log('[poll] received raw length', raw.length, 'starts:', raw.slice(0,120));
+        const sig = makeSignature(json);
+        if (sig !== lastSignature) {
+          lastSignature = sig;
           if (Array.isArray(json)) {
             render(json);
             status.textContent = 'OK';
@@ -218,7 +244,7 @@
       refreshBtn.disabled = true;
       try {
         const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
-        lastJsonRaw = raw;
+        lastSignature = makeSignature(json);
         if (Array.isArray(json)) {
           render(json);
           status.textContent = 'OK';

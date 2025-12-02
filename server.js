@@ -1,13 +1,10 @@
-// server.js - production-ready
+// server.js - production-ready (patched)
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const { spawn } = require('child_process');
-
-// NOTE: removed top-level req usage
-
 
 // Load local env in development only
 if (process.env.NODE_ENV !== 'production') {
@@ -32,10 +29,15 @@ console.log('PID:', process.pid);
 const app = express();
 app.use(express.json());
 
-// Serve static files from public/
-app.use(express.static(path.join(__dirname, 'public')));
+// Simple request logger for key endpoints
+app.use((req, res, next) => {
+  if (req.path === '/parking-status.json' || req.path === '/admin/run-extractor') {
+    console.log(`[server] ${new Date().toISOString()} ${req.method} ${req.path} from ${req.ip}`);
+  }
+  next();
+});
 
-// --- extractor runner (inserted) ---
+// --- extractor runner ---
 let extractor = null;
 
 function runExtractor() {
@@ -44,9 +46,16 @@ function runExtractor() {
     return;
   }
   console.log('Spawning extractor...');
-  extractor = spawn('node', [path.join(__dirname, 'extractor.js')], {
+  extractor = spawn(process.execPath || 'node', [path.join(__dirname, 'extractor.js')], {
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env }
+    env: { ...process.env },
+    // keep attached so we can manage lifecycle from this process
+    detached: false
+  });
+
+  extractor.on('error', (err) => {
+    console.error('[extractor] spawn error', err);
+    extractor = null;
   });
 
   extractor.stdout.on('data', (d) => console.log('[extractor]', d.toString().trim()));
@@ -62,33 +71,17 @@ if (process.env.RUN_EXTRACTOR_ON_START === '1') {
   runExtractor();
 }
 
-// server.js — replace your existing /admin/run-extractor handler with this
-app.post('/admin/run-extractor', async (req, res) => {
-  // Masked debug: logs only first 4 chars if header present
-// NOTE: removed top-level req usage
+// --- API routes (defined before static middleware) ---
 
-  const expected = process.env.EXTRACTOR_SECRET || '';
-  if (!incoming || incoming !== expected) {
-    return res.status(403).json({ error: 'forbidden' });
-  }
-
-  try {
-    // your existing extractor logic here, for example:
-    // await runExtractor();
-    return res.json({ started: true });
-  } catch (err) {
-    console.error('[extractor] error', err);
-    return res.status(500).json({ error: 'failed' });
-  }
-});
-
-// --- end extractor runner ---
-
-// routes
+// Health
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+  const p = path.join(__dirname, 'public', 'parking-status.json');
+  const ok = fs.existsSync(p);
+  const mtime = ok ? fs.statSync(p).mtime.toISOString() : null;
+  res.json({ status: ok ? 'ok' : 'not_ready', file_mtime: mtime });
 });
 
+// Root info
 app.get('/', (req, res) => res.json({ message: 'ormezo-parking running', uptime: process.uptime() }));
 
 // Friendly endpoints for extractor output (reads public files)
@@ -97,8 +90,13 @@ app.get('/parking-status.json', (req, res) => {
   if (!fs.existsSync(p)) return res.status(404).json({ error: 'not ready' });
   try {
     const raw = fs.readFileSync(p, 'utf8');
+    // Force no-cache so clients revalidate
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     return res.type('application/json').send(raw);
   } catch (e) {
+    console.error('[parking-status] read error', e);
     return res.status(500).json({ error: 'read error' });
   }
 });
@@ -110,11 +108,34 @@ app.get('/snapshot', (req, res) => {
     const raw = fs.readFileSync(p, 'utf8');
     return res.json(JSON.parse(raw));
   } catch (e) {
+    console.error('[snapshot] read error', e);
     return res.status(500).json({ error: 'read error' });
   }
 });
 
-// Bind to Render-provided port and host
+// Admin endpoint to trigger extractor (protected by header secret)
+app.post('/admin/run-extractor', async (req, res) => {
+  const expected = process.env.EXTRACTOR_SECRET || '';
+  // read secret from header 'x-extractor-secret'
+  const incoming = (req.get('x-extractor-secret') || '').toString();
+
+  if (!expected || incoming !== expected) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+
+  try {
+    runExtractor(); // start extractor (non-blocking)
+    return res.json({ started: true });
+  } catch (err) {
+    console.error('[extractor] error', err);
+    return res.status(500).json({ error: 'failed' });
+  }
+});
+
+// Serve static files from public/ (after API routes) with no caching for safety
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0 }));
+
+// Bind to port and host
 const port = process.env.PORT || 3000;
 const host = '0.0.0.0';
 console.log('PORT:', process.env.PORT || '<none>', '-> listening on', port);
