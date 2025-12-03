@@ -1,8 +1,0 @@
-# careful: kills whatever is listening on 3000
-
-start-service:
-	PORT=3001 node server.js
-	$env:PORT=3001; node server.js
-
-stop-service:
-	sudo fuser -k 3001/tcp
