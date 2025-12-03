@@ -1,5 +1,0 @@
-[dotenv@17.2.3] injecting env (0) from .env.local -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
-STARTUP COMMIT: da2cc6e
-PID: 18752
-PORT: <none> -> listening on 3000
-Port 3000 is already in use. Exiting.
