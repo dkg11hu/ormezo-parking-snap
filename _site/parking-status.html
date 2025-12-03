@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>P+R Parkoló Foglaltság</title>
+  <style>
+    body { font-family: sans-serif; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
+    .bar { background: #eee; height: 1em; position: relative; }
+    .fill { background: #4caf50; height: 100%; }
+    .low .fill { background: #f44336; }
+    .unknown .fill { background: #999; }
+    .timestamp { font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>P+R Parkoló Foglaltság – Frissítve: 2025-11-25 17:15:42</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Parkoló</th>
+        <th>Szabad helyek</th>
+        <th>Összes férőhely</th>
+        <th>Frissítve</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="free">
+        <td>Őrmező P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 162/485 (33.4%)">
+            <div class="fill" style="width:33.4%"></div>
+          </div>
+          162
+        </td>
+        <td>485</td>
+        <td class="timestamp">2025-11-25 17:15:42</td>
+      </tr>
+
+      <tr class="free">
+        <td>Őrmező P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 172/500 (34.4%)">
+            <div class="fill" style="width:34.4%"></div>
+          </div>
+          172
+        </td>
+        <td>500</td>
+        <td class="timestamp">2025-11-25 17:15:42</td>
+      </tr>
+
+      <tr class="free">
+        <td>Etele P1 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 66/247 (26.72%)">
+            <div class="fill" style="width:26.72%"></div>
+          </div>
+          66
+        </td>
+        <td>247</td>
+        <td class="timestamp">2025-11-25 17:15:42</td>
+      </tr>
+
+      <tr class="free">
+        <td>Etele P2 P+R parkoló</td>
+        <td>
+          <div class="bar" title="Szabad: 70/221 (31.67%)">
+            <div class="fill" style="width:31.67%"></div>
+          </div>
+          70
+        </td>
+        <td>221</td>
+        <td class="timestamp">2025-11-25 17:15:42</td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    const tbody = document.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+      const aVal = parseInt(a.children[1].textContent) || 0;
+      const bVal = parseInt(b.children[1].textContent) || 0;
+      return bVal - aVal;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  </script>
+</body>
+</html>

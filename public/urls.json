@@ -1,0 +1,6 @@
+[
+  { "id": "p1", "label": "Őrmező P1 P+R parkoló", "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P121", "useProxy": true },
+  { "id": "p2", "label": "Őrmező P2 P+R parkoló", "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P131", "useProxy": true },
+  { "id": "p3", "label": "Etele P1 P+R parkoló",    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P101", "useProxy": true },
+  { "id": "p4", "label": "Etele P2 P+R parkoló",    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P111", "useProxy": true }
+]

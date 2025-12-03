@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" sizes="64x64" href="/icons/favicon-64.png" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <title>P+R Parkoló Foglaltság</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>P+R Parkoló Foglaltság</h1>
+        <div class="meta" id="last-updated">Frissítve: —</div>
+      </div>
+
+      <div id="controls">
+        <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
+        <div class="status" id="status" aria-hidden="true">—</div>
+      </div>
+    </header>
+
+    <!-- overall free-space bar -->
+    <div class="overall-status" aria-live="polite" role="region" aria-label="Szabad helyek összesítve">
+      <div class="overall-header">
+        <strong id="overall-title" class="overall-title">Szabad helyek összesítve</strong>
+        <div id="overall-percent" class="overall-percent">—</div>
+      </div>
+
+      <div id="status-track"
+           class="status-track"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           aria-valuenow="0"
+           aria-labelledby="overall-title">
+        <div id="status-fill" class="status-fill"></div>
+      </div>
+
+      <div id="overall-note" class="overall-note" aria-hidden="false"></div>
+    </div>
+
+    <main id="list" aria-live="polite">
+      <!-- cards injected here -->
+    </main>
+
+    <footer>
+      Az oldal automatikusan frissül. Ha nem látsz friss adatot, nyomd meg a Frissít gombot.
+    </footer>
+  </div>
+
+  <script>
+    // Configuration
+    const LOCAL_JSON = '/parking-status.json';
+    const POLL_INTERVAL_MS = 30_000;      // poll every 30s
+    const FALLBACK_REFRESH_MS = 300_000;  // 5 minutes fallback
+
+    // DOM refs
+    const list = document.getElementById('list');
+    const lastUpdated = document.getElementById('last-updated');
+    const status = document.getElementById('status');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const overallPercent = document.getElementById('overall-percent');
+    const statusFill = document.getElementById('status-fill');
+    const overallNote = document.getElementById('overall-note');
+    const statusTrack = document.getElementById('status-track');
+
+    // State
+    let lastJsonRaw = null;
+    let pollTimer = null;
+
+    // Helpers
+    function createCard(item) {
+      const freePct = item.total ? (item.free / item.total * 100) : 0;
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('role','article');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = item.label;
+
+      const barWrap = document.createElement('div');
+      barWrap.className = 'bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const fill = document.createElement('div');
+      fill.className = 'fill';
+      fill.style.width = freePct + '%';
+
+      const pctText = document.createElement('div');
+      pctText.className = 'pct';
+      pctText.textContent = freePct.toFixed(1) + '%';
+
+      bar.appendChild(fill);
+      barWrap.appendChild(bar);
+      barWrap.appendChild(pctText);
+
+      left.appendChild(label);
+      left.appendChild(barWrap);
+
+      const numbers = document.createElement('div');
+      numbers.className = 'numbers';
+      const count = document.createElement('div');
+      count.className = 'count';
+      count.textContent = item.free;
+      const total = document.createElement('div');
+      total.className = 'total';
+      total.textContent = '/' + item.total;
+      const ts = document.createElement('div');
+      ts.className = 'timestamp';
+      ts.textContent = item.updated || '';
+
+      numbers.appendChild(count);
+      numbers.appendChild(total);
+      numbers.appendChild(ts);
+
+      card.appendChild(left);
+      card.appendChild(numbers);
+
+      return card;
+    }
+
+    function render(data) {
+      data.sort((a,b) => (b.free||0) - (a.free||0));
+      list.innerHTML = '';
+      data.forEach(it => list.appendChild(createCard(it)));
+      lastUpdated.textContent = 'Frissítve: ' + (data[0]?.updated || new Date().toISOString());
+      updateOverallStatus(data);
+    }
+
+    function updateOverallStatus(data) {
+      if (!Array.isArray(data) || data.length === 0) {
+        overallPercent.textContent = '—';
+        statusFill.style.width = '0%';
+        overallNote.textContent = '';
+        if (statusTrack) statusTrack.setAttribute('aria-valuenow', '0');
+        return;
+      }
+
+      let totalSpaces = 0, totalFree = 0;
+      for (const p of data) {
+        totalSpaces += Number(p.total) || 0;
+        totalFree += Number(p.free) || 0;
+      }
+
+      const percentFree = totalSpaces > 0 ? Math.round((totalFree / totalSpaces) * 100) : 0;
+
+      overallPercent.textContent = percentFree + '%';
+      statusFill.style.width = percentFree + '%';
+      if (statusTrack) statusTrack.setAttribute('aria-valuenow', String(percentFree));
+
+      const latest = data.reduce((a,b) => (a && a > (b.updated||'') ? a : (b.updated||'')), '');
+      overallNote.textContent = `Összes: ${totalSpaces} • Szabad: ${totalFree} • Foglalt: ${Math.max(0, totalSpaces - totalFree)} • Utolsó: ${latest || 'ismeretlen'}`;
+    }
+
+    async function fetchJsonRaw(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const raw = await res.text();
+      let json;
+      try { json = JSON.parse(raw); } catch (e) { throw new Error('JSON parse error'); }
+      return { raw, json };
+    }
+
+    async function loadInitialFromLocal() {
+      status.textContent = 'Betöltés…';
+      refreshBtn.disabled = true;
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON);
+        lastJsonRaw = raw;
+        if (!Array.isArray(json)) throw new Error('Váratlan formátum');
+        render(json);
+        status.textContent = 'OK';
+      } catch (err) {
+        console.error('initial load error', err);
+        status.textContent = 'Hiba';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    async function pollLocalJson() {
+      try {
+        console.log('[poll] fetching parking-status.json', new Date().toISOString());
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        console.log('[poll] received raw length', raw.length, 'starts:', raw.slice(0,120));
+        if (raw !== lastJsonRaw) {
+          lastJsonRaw = raw;
+          if (Array.isArray(json)) {
+            // TEMP: force render every fetch for testing
+            // render(json);
+
+            // Normal behavior
+            render(json);
+            status.textContent = 'OK';
+          } else {
+            console.warn('polled JSON not array, skipping render');
+          }
+        }
+      } catch (err) {
+        console.error('poll error', err);
+        status.textContent = 'Hiba';
+      }
+    }
+
+
+    function startPolling() {
+      if (pollTimer) return;
+      pollLocalJson().catch(()=>{});
+      pollTimer = setInterval(pollLocalJson, POLL_INTERVAL_MS);
+    }
+
+    async function manualRefresh() {
+      status.textContent = 'Frissítés…';
+      refreshBtn.disabled = true;
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        lastJsonRaw = raw;
+        if (Array.isArray(json)) {
+          render(json);
+          status.textContent = 'OK';
+        } else {
+          status.textContent = 'Hiba';
+        }
+      } catch (err) {
+        console.error('manual refresh error', err);
+        status.textContent = 'Hiba';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadInitialFromLocal();
+      startPolling();
+      setInterval(manualRefresh, FALLBACK_REFRESH_MS);
+    });
+
+    refreshBtn.addEventListener('click', manualRefresh);
+
+    // touch pull-to-refresh
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; });
+    window.addEventListener('touchend', e => {
+      const dy = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY - touchStartY : 0;
+      if (dy > 80) manualRefresh();
+    });
+  </script>
+</body>
+</html>

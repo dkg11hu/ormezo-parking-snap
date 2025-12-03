@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Parkoló státusz</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 1rem; }
+    table { border-collapse: collapse; width: 100%; max-width: 900px; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; text-align: left; }
+    th { background: #fafafa; font-weight: 600; }
+    .updated { color: #666; font-size: 0.9rem; margin-top: 0.5rem; }
+    .error { color: #b00; }
+  </style>
+</head>
+<body>
+  <h1>Parkoló státusz</h1>
+
+  <div id="status"></div>
+  <div class="updated" id="updated"></div>
+
+  <script>
+    // Configuration
+    const JSON_URL = '/parking-status.json';
+    const POLL_INTERVAL_MS = 30_000; // 30 seconds
+
+    // Render helpers
+    function renderList(data) {
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById('status').innerHTML = '<p>Nincs adat.</p>';
+        return;
+      }
+
+      const rows = data.map(item => `
+        <tr>
+          <td><strong>${escapeHtml(item.label)}</strong></td>
+          <td>${escapeHtml(String(item.free))} / ${escapeHtml(String(item.total))}</td>
+          <td>${escapeHtml(item.updated || '')}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('status').innerHTML = `
+        <table>
+          <thead><tr><th>Parkoló</th><th>Szabad / Összes</th><th>Frissítve</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function setUpdated(text) {
+      document.getElementById('updated').textContent = text || '';
+    }
+
+    function showError(msg) {
+      document.getElementById('status').innerHTML = '<p class="error">' + escapeHtml(msg) + '</p>';
+      setUpdated('');
+    }
+
+    // Basic HTML escaping
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Fetch and render once, then start polling
+    async function init() {
+      try {
+        const initial = await fetchJson(JSON_URL);
+        renderList(initial);
+        // show the latest updated timestamp if present
+        const latest = initial && initial[0] && initial[0].updated;
+        setUpdated(latest ? 'Utolsó frissítés: ' + latest : '');
+      } catch (err) {
+        showError('Nem sikerült betölteni az induló adatot.');
+        console.error('initial load error', err);
+      }
+
+      // Start polling after initial load
+      startPolling();
+    }
+
+    // Polling logic
+    let pollTimer = null;
+    function startPolling() {
+      if (pollTimer) return;
+      pollTimer = setInterval(async () => {
+        try {
+          const data = await fetchJson(JSON_URL + '?t=' + Date.now());
+          renderList(data);
+          const latest = data && data[0] && data[0].updated;
+          setUpdated(latest ? 'Utolsó frissítés: ' + latest : '');
+        } catch (err) {
+          console.error('poll error', err);
+          // keep previous UI but show a small notice
+          setUpdated('Hiba a frissítés során. Utolsó sikeres frissítés: ' + (document.getElementById('updated').textContent || 'ismeretlen'));
+        }
+      }, POLL_INTERVAL_MS);
+    }
+
+    // Helper to fetch JSON with error handling
+    async function fetchJson(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

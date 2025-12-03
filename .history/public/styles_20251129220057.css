@@ -1,0 +1,141 @@
+:root{
+  --bg:#ffffff;
+  --muted:#6b7280;
+  --accent:#0f766e;
+  --danger:#dc2626;
+  --card:#f8fafc;
+  --bar-bg:#e6eef0;
+  --fill:#10b981;
+  --gap:12px;
+  --radius:10px;
+  --pad:12px;
+}
+
+html,body{
+  height:100%;
+  margin:0;
+  background:var(--bg);
+  color:#0f172a;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+}
+
+.wrap{
+  max-width:420px;
+  margin:0 auto;
+  padding:16px;
+}
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+h1{
+  font-size:1.05rem;
+  margin:0;
+  line-height:1.1;
+}
+
+.meta{
+  font-size:0.85rem;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+#controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+button{
+  background:var(--accent);
+  color:#fff;
+  border:0;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:0.95rem;
+  cursor:pointer;
+}
+
+button[disabled]{ opacity:.6; cursor:default; }
+
+.status{ font-size:0.85rem; color:var(--muted); }
+
+main{ display:grid; gap:12px; }
+
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:var(--pad);
+  box-shadow:0 1px 2px rgba(2,6,23,0.06);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.row{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+
+.label{ font-weight:600; font-size:0.98rem; }
+
+.numbers{ display:flex; flex-direction:column; align-items:flex-end; min-width:86px; }
+
+.count{ font-size:1.05rem; font-weight:700; }
+
+.total{ font-size:0.85rem; color:var(--muted); }
+
+.bar-wrap{ width:100%; display:flex; align-items:center; gap:8px; }
+
+.bar{
+  flex:1;
+  height:12px;
+  background:var(--bar-bg);
+  border-radius:8px;
+  overflow:hidden;
+  position:relative;
+}
+
+.fill{
+  height:100%;
+  background:var(--fill);
+  transition:width .4s ease;
+  width:0%;
+}
+
+.low .fill{ background:var(--danger); }
+
+.timestamp{ font-size:0.82rem; color:var(--muted); text-align:right; }
+
+/* width utility classes for fill in 5% increments */
+.w-0  .fill{ width:0%; }
+.w-5  .fill{ width:5%; }
+.w-10 .fill{ width:10%; }
+.w-15 .fill{ width:15%; }
+.w-20 .fill{ width:20%; }
+.w-25 .fill{ width:25%; }
+.w-30 .fill{ width:30%; }
+.w-35 .fill{ width:35%; }
+.w-40 .fill{ width:40%; }
+.w-45 .fill{ width:45%; }
+.w-50 .fill{ width:50%; }
+.w-55 .fill{ width:55%; }
+.w-60 .fill{ width:60%; }
+.w-65 .fill{ width:65%; }
+.w-70 .fill{ width:70%; }
+.w-75 .fill{ width:75%; }
+.w-80 .fill{ width:80%; }
+.w-85 .fill{ width:85%; }
+.w-90 .fill{ width:90%; }
+.w-95 .fill{ width:95%; }
+.w-100 .fill{ width:100%; }
+
+/* Responsive adjustments */
+@media(min-width:420px){
+  .wrap{ padding:20px; }
+  .card{ flex-direction:row; align-items:center; }
+  .bar-wrap{ max-width:320px; }
+  .numbers{ align-items:flex-end; }
+}

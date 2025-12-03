@@ -1,0 +1,15 @@
+{
+  "name": "ormezo-parking",
+  "version": "0.1.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "git rev-parse --short HEAD > .commit 2>/dev/null || echo '<no-git>' > .commit && echo BUILD_COMMIT: $(cat .commit) || true"
+  },
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,95 @@
+PORT ?= 3000
+PIDFILE ?= server.pid
+LOGFILE ?= server.log
+
+.PHONY: start-service stop-service restart-service run-extractor run-extractor-verbose
+
+# Start server in background (nohup) and write PID
+start-service:
+	@echo "Starting server in background (logs -> $(LOGFILE))..."
+	@nohup node server.js > $(LOGFILE) 2>&1 & echo $$! > $(PIDFILE)
+	@echo "Started with PID $$(cat $(PIDFILE))"
+
+# Stop by PID file if present, otherwise fall back to lsof
+stop-service:
+	@echo "Stopping server on port $(PORT) ..."
+	@if [ -f "$(PIDFILE)" ]; then \
+	PID=$$(cat $(PIDFILE)); \
+	echo "Killing PID $$PID"; \
+	kill $$PID && rm -f $(PIDFILE) || (echo "Failed to kill $$PID"; exit 1); \
+	else \
+	echo "No PID file; falling back to lsof lookup"; \
+	lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t || true; \
+	lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t | xargs -r kill || true; \
+	fi
+
+restart-service: stop-service start-service
+
+run-extractor:
+	@echo "Running extractor and showing first 200 lines of output..."
+	@time node extractor.js 2>&1 | sed -n '1,200p' || true
+	@echo
+	@echo "Listing parking-status.json (if present):"
+	@ls -l parking-status.json || true
+	@echo
+	@echo "Show first 400 bytes of parking-status.json:"
+	@head -c 400 parking-status.json || true
+	@echo
+	@echo "Validate JSON with jq (if installed):"
+	@jq . parking-status.json | sed -n '1,40p' || true
+
+run-extractor-verbose:
+	@echo "Running extractor (verbose) ..."
+	@start=$$(date +%s); node extractor.js 2>&1 | tee extractor.log; rc=$$?; end=$$(date +%s); echo "Exit code: $$rc, duration: $$((end-start))s"; exit $$rc
+
+confirm-run:
+	# search all logs in repo for extractor start/end lines
+	grep -nR "EXTRACTOR START" . || true
+	grep -nR "EXTRACTOR END" . || true
+
+	# check server.log for spawn messages or extractor stdout lines
+	grep -n "Extractor finished" server.log || true
+	grep -n "spawn" server.log || true
+
+	# check parking-status.json timestamps to see which run produced the file
+	jq -r '.[].updated' parking-status.json
+	stat -c '%y %n' parking-status.json
+
+status:
+	@echo "Project status:"
+	@if [ -f "$(PIDFILE)" ]; then \
+	  PID=$$(cat $(PIDFILE)); \
+	  echo "  PID file: $(PIDFILE) -> $$PID"; \
+	  if ps -p $$PID > /dev/null 2>&1; then \
+		echo "  Process: running (pid $$PID)"; \
+		ps -p $$PID -o pid,etime,cmd | sed -n '2p'; \
+	  else \
+		echo "  Process: not running (stale PID file)"; \
+	  fi \
+	else \
+	  echo "  PID file: not present"; \
+	fi; \
+	echo; \
+	echo "  Port listener (port $(PORT)):"; \
+	lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t -a -p $$PID 2>/dev/null || lsof -iTCP:$(PORT) -sTCP:LISTEN -Pn -t || echo "    none"; \
+	echo; \
+	echo "  Last 40 lines of server.log (if present):"; \
+	[ -f $(LOGFILE) ] && tail -n 40 $(LOGFILE) || echo "    $(LOGFILE) not found"
+
+commit:
+	git init
+	git add .
+	git commit -m ($MSG) "New commit"
+	git branch -M main
+	git remote add origin https://github.com/dkg11hu/ormezo-parkolo-snap.git/
+	git push -u origin main
+
+deploy:
+	git add render.yaml
+	git commit -m "Add Render service manifest"
+	git push origin main
+	
+trigger-extractor: 
+	read -s SECRET && curl -X POST -H "x-run-secret: $SECRET" https://ormezo-parking-snap.onrender.com/admin/run-extractor
+
+	

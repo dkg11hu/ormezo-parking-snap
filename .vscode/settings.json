@@ -1,0 +1,23 @@
+{
+  "terminal.integrated.profiles": {
+  "WSL": {
+    "path": "wsl.exe",
+    "icon": "terminal-linux",
+    "color": "terminal.ansiGreen"
+  },
+  "Server": {
+    "path": "bash",
+    "icon": "server",
+    "color": "terminal.ansiMagenta"
+  },
+  "Git": {
+    "path": "bash",
+    "icon": "git-branch",
+    "color": "terminal.ansiYellow"
+  }
+,
+"terminal.integrated.defaultProfile.windows": "WSL"
+},
+"cSpell.enabled": false
+
+}
