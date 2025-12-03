@@ -78,7 +78,9 @@
     <header>
       <div>
         <h1>P+R Parkoló Foglaltság</h1>
-        <div class="meta" id="last-updated">Frissítve: —</div>
+          <div id="last-refresh">Frissítve: ...</div>
+          <div id="last-recorded">Utolsó rögzítés: ...</div>
+          <div id="data-age">Adat kora: ...</div>
       </div>
 
       <div id="controls">
@@ -527,6 +529,39 @@
       const dy = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY - touchStartY : 0;
       if (dy > 80) manualRefresh();
     });
+  </script>
+  <script>
+  async function updateStatus() {
+    try {
+      // cache-busting query param
+      const res = await fetch("parking-status.json?cb=" + Date.now());
+      const data = await res.json();
+
+      // Utolsó rögzítés = backend last_fetch
+      const lastRecorded = new Date(data.last_fetch).toLocaleString("hu-HU");
+      document.getElementById("last-recorded").textContent =
+        "Utolsó rögzítés: " + lastRecorded;
+
+      // Frissítve = frontend refresh time
+      const lastRefresh = new Date().toLocaleString("hu-HU");
+      document.getElementById("last-refresh").textContent =
+        "Frissítve: " + lastRefresh;
+
+      // Adat kora = különbség percekben
+      const ageMinutes = Math.floor(
+        (Date.now() - new Date(data.last_fetch).getTime()) / 60000
+      );
+      document.getElementById("data-age").textContent =
+        "Adat kora: " + ageMinutes + " perc";
+    } catch (err) {
+      console.error("Hiba a státusz frissítésénél:", err);
+    }
+  }
+
+  // első futtatás betöltéskor
+  updateStatus();
+  // ismétlés 60 másodpercenként
+  setInterval(updateStatus, 60000);
   </script>
 </body>
 </html>
