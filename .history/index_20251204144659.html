@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Parkoló státusz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Grid layout a kártyákhoz */
+    .grid {
+      display: grid;
+      gap: var(--gap);
+    }
+
+    /* 📱 Portré: 4x1 */
+    @media screen and (orientation: portrait) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, auto);
+      }
+    }
+
+    /* 📱 Landscape: 2x2 */
+    @media screen and (orientation: landscape) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(2, auto);
+      }
+    }
+  </style>
+  <script>
+    function refreshParkingStatus() {
+      fetch("parking-status.json")
+        .then(r => r.json())
+        .then(data => {
+          const grid = document.getElementById("parking-grid");
+          grid.innerHTML = "";
+
+          let totalFree = 0, totalLots = 0;
+
+          data.forEach(entry => {
+            totalFree += entry.free;
+            totalLots += entry.total;
+            const percent = Math.round((entry.free / entry.total) * 100);
+
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <div class="left">
+                <div class="label">${entry.label}</div>
+                <div class="bar-wrap">
+                  <div class="bar">
+                    <div class="fill" style="width:${percent}%"></div>
+                  </div>
+                  <div class="pct">${percent}%</div>
+                </div>
+              </div>
+              <div class="numbers">
+                <div class="count">${entry.free}</div>
+                <div class="total">/${entry.total}</div>
+                <div class="timestamp">${entry.updated}</div>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          // összesített státusz
+          const overallPct = Math.round((totalFree / totalLots) * 100);
+          document.querySelector(".status-fill").style.width = overallPct + "%";
+          document.querySelector(".overall-summary .free").textContent = totalFree;
+          document.querySelector(".overall-summary .occupied").textContent = totalLots - totalFree;
+          document.querySelector(".overall-meta").textContent = "Összes férőhely: " + totalLots;
+        })
+        .catch(err => console.error("Hiba a JSON betöltésekor:", err));
+    }
+    window.onload = refreshParkingStatus;
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Parkoló státusz</h1>
+        <div class="meta">Automatikus frissítés betöltéskor</div>
+      </div>
+    </header>
+
+    <!-- összesített státusz -->
+    <div class="overall-status">
+      <div class="overall-summary">
+        <div class="free">0</div> szabad
+        <div class="occupied">0</div> foglalt
+      </div>
+      <div class="overall-meta">Összes férőhely: 0</div>
+      <div class="status-track">
+        <div class="status-fill"></div>
+      </div>
+    </div>
+
+    <!-- parkolók listája -->
+    <main id="parking-grid" class="grid"></main>
+
+    <footer>
+      Adatok forrása: Budapest Közút
+    </footer>
+  </div>
+</body>
+</html>

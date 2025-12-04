@@ -1,0 +1,21 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "cSpell.language": "en,hu",
+    "cSpell.words": [
+        "SwitchTracker",   // project-specific name, treated as correct
+        "Ormezo",
+        "Őrmező"           // uncommon Hungarian proper noun
+    ],
+    "cSpell.ignoreWords": [
+        "betöltés",            // skip common dev markers
+        "cli"              // skip technical abbreviations
+    ],
+    "cSpell.flagWords": [
+        "teh"              // always flagged as wrong
+    ]    }
+}

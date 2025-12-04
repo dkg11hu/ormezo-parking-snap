@@ -8,7 +8,7 @@
       "xpath": "//*[@id='main-content']/app-parking-facility-history/ion-content/div/div[2]/div[2]/div[1]/ion-text/span"
     },
     "timestampSelector": {
-      "xpath": "//*[@id='main-content']/app-parking-facility-history/ion-content/div/div[2]/ion-text[2]/span"
+      "xpath": "//span[@class='last-update']"
     }
   },
   {
@@ -20,7 +20,7 @@
       "css": "#main-content > app-parking-facility-history > ion-content > div > div.ion-margin-vertical.border-dark-bottom > div:nth-child(2) > div.ion-text-center > ion-text > span"
     },
     "timestampSelector": {
-      "xpath": "//*[@id='main-content']/app-parking-facility-history/ion-content/div/div[2]/ion-text[2]/span"
+      "xpath": "//span[@class='last-update']"
     }
   },
   {
@@ -32,7 +32,7 @@
       "css": "#main-content > app-parking-facility-history > ion-content > div > div.ion-margin-vertical.border-dark-bottom > div:nth-child(2) > div.ion-text-center > ion-text > span"
     },
     "timestampSelector": {
-      "xpath": "//*[@id='main-content']/app-parking-facility-history/ion-content/div/div[2]/ion-text[2]/span"
+      "xpath": "//span[@class='last-update']"
     }
   },
   {
@@ -44,7 +44,7 @@
       "css": "#main-content > app-parking-facility-history > ion-content > div > div.ion-margin-vertical.border-dark-bottom > div:nth-child(2) > div.ion-text-center > ion-text > span"
     },
     "timestampSelector": {
-      "xpath": "//*[@id='main-content']/app-parking-facility-history/ion-content/div/div[2]/ion-text[2]/span"
+      "xpath": "//span[@class='last-update']"
     }
   }
 ]

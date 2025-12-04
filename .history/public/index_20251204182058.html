@@ -32,7 +32,7 @@
   <main id="parking-grid" class="grid"></main>
 
 <script>
-  // relatív idő kiszámítása
+
   function timeDiffString(updated) {
     const now = new Date();
     const upd = new Date(updated.replace(" ", "T")); // ISO kompatibilis
@@ -43,28 +43,24 @@
     const diffH = Math.floor(diffMin / 60);
     if (diffH < 24) return diffH + " órája";
     const diffD = Math.floor(diffH / 24);
-    return diffD + " napja";
-  }
+  return diffD + " napja";
+}
+
 
   function refreshParkingStatus() {
-    const url = "parking-status.json?ts=" + Date.now(); // cache-buster
-    console.log("Fetching:", url);
-
-    fetch(url)
+    fetch("parking-status.json?ts=" + Date.now()) // cache-buster
       .then(r => r.json())
       .then(data => {
         const grid = document.getElementById("parking-grid");
         grid.innerHTML = "";
 
-        // report time a fejlécben
+        // report time frissítése
         const reportTime = new Date();
         document.getElementById("report-time").textContent =
           "Jelentés ideje: " + reportTime.toLocaleString("hu-HU");
 
         data.forEach(entry => {
           const percent = Math.round((entry.free / entry.total) * 100);
-          const relative = timeDiffString(entry.updated);
-
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
@@ -92,7 +88,7 @@
   // onload + automatikus frissítés
   window.onload = () => {
     refreshParkingStatus();               // első betöltéskor lefut
-    setInterval(refreshParkingStatus, 10000); // frissítés 60 másodpercenként
+    setInterval(refreshParkingStatus, 20000); // frissítés 60 másodpercenként
   };
 </script>
 </body>

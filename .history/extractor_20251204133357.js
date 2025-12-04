@@ -42,7 +42,6 @@ process.on('SIGTERM', () => {
 
     for (const entry of facilities) {
       console.log(`\n=== Processing ${entry.label} (${entry.id}) ===`);
-      console.log(`[${entry.id}] Using URL from urls.json: ${entry.url}`);
       await driver.get(entry.url);
 
       // Occupancy extraction with short-circuit
@@ -250,3 +249,38 @@ console.log('Generated public/parking-status.html and public/parking-status.json
     console.log('EXTRACTOR END pid=' + process.pid + ' run=' + runId);
   }
 })();
+
+
+
+// assume `data` is the array you built and each item may have an `updated` from source
+const nowIso = new Date().toISOString();
+const normalized = data.map(it => ({
+  ...it,
+  source_updated: it.updated || null, // preserve original source timestamp
+  fetched_at: nowIso                     // canonical ISO UTC fetch/write time
+}));
+
+// feltételezve: parsedSource = "2025-11-29 21:36:43"
+const localIso = parsedSource.replace(' ', 'T'); // no 'Z'
+const parsed = new Date(localIso);
+item.source_updated = parsedSource; // eredeti string
+item.fetched_at = new Date().toISOString(); // pontos write time
+// opcionálisan: item.source_updated_iso = parsed.toISOString();
+
+// minimal validation
+function valid(it) {
+  return it && typeof it.id === 'string' &&
+         Number.isFinite(Number(it.free)) &&
+         Number.isFinite(Number(it.total));
+}
+if (!Array.isArray(normalized) || !normalized.every(valid)) {
+  console.error('[extractor] validation failed');
+  process.exit(1);
+}
+
+// atomic write
+fs.writeFileSync(tmpPath, JSON.stringify(normalized, null, 2), 'utf8');
+fs.renameSync(tmpPath, outPath);
+console.log('[extractor] wrote', outPath, 'mtime=', fs.statSync(outPath).mtime.toISOString());
+process.exit(0);
+

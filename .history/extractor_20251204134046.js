@@ -42,7 +42,6 @@ process.on('SIGTERM', () => {
 
     for (const entry of facilities) {
       console.log(`\n=== Processing ${entry.label} (${entry.id}) ===`);
-      console.log(`[${entry.id}] Using URL from urls.json: ${entry.url}`);
       await driver.get(entry.url);
 
       // Occupancy extraction with short-circuit

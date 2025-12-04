@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <base href="/ormezo-parking-snap/" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" sizes="64x64" href="/icons/favicon-64.png" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>P+R Parkoló Foglaltság</title>
+
+  <style>
+    /* Basic layout */
+    :root {
+      --bg: #fff;
+      --text: #111;
+      --muted: #666;
+      --accent: #1b8f3b;
+      --danger: #d32f2f;
+      --track-bg: #eee;
+      --fill-bg: #1b8f3b;
+      --card-bg: #fff;
+      --card-border: #e6e6e6;
+    }
+    html,body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; color:var(--text); background:var(--bg); }
+    .wrap { max-width:900px; margin:0 auto; padding:1rem; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
+    h1 { margin:0; font-size:1.25rem; }
+    .meta { color:var(--muted); font-size:0.95rem; margin-top:0.25rem; }
+    #controls { display:flex; gap:0.5rem; align-items:center; }
+    button { padding:0.4rem 0.7rem; border-radius:6px; border:1px solid #ddd; background:#fafafa; cursor:pointer; }
+    button:disabled { opacity:0.6; cursor:default; }
+
+    .overall-status { margin-bottom:1rem; }
+    .overall-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+    .overall-title { font-size:1rem; }
+    .overall-percent { font-weight:700; color:var(--muted); }
+
+    .status-track { height:12px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
+    .status-fill { height:100%; background:var(--fill-bg); width:0%; transition:width 300ms ease; }
+
+    .overall-note { margin-top:0.5rem; color:var(--muted); font-size:0.95rem; }
+
+    main#list { display:grid; gap:0.75rem; margin-bottom:1rem; }
+
+    .card { display:flex; justify-content:space-between; align-items:center; padding:0.6rem; border:1px solid var(--card-border); border-radius:8px; background:var(--card-bg); }
+    .left { display:flex; flex-direction:column; gap:0.5rem; min-width:0; }
+    .label { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar-wrap { display:flex; align-items:center; gap:0.5rem; }
+    .bar { width:220px; max-width:40vw; height:10px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
+    .fill { height:100%; background:var(--fill-bg); width:0%; transition:width 300ms ease; }
+    .pct { font-size:0.85rem; color:var(--muted); min-width:48px; text-align:right; }
+
+    .numbers { display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem; min-width:6rem; }
+    .count { font-weight:700; font-size:1.1rem; }
+    .total { color:var(--muted); }
+    .timestamp { color:var(--muted); font-size:0.85rem; text-align:right; }
+
+    footer { color:var(--muted); font-size:0.9rem; text-align:center; margin-top:1rem; }
+
+    /* overall summary styles requested */
+    .overall-summary { display:flex; gap:1rem; align-items:center; font-weight:600; }
+    .overall-summary .free { color:var(--accent); }
+    .overall-summary .occupied { color:var(--danger); }
+    .overall-meta { margin-top:0.25rem; color:var(--muted); font-weight:400; font-size:0.95rem; }
+
+    @media (max-width:520px) {
+      .bar { width:140px; }
+      .numbers { min-width:5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>P+R Parkoló Foglaltság</h1>
+        <div class="meta" id="last-updated">Frissítve: —</div>
+      </div>
+
+      <div id="controls">
+        <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
+        <div class="status" id="status" aria-hidden="true">—</div>
+      </div>
+    </header>
+
+    <div class="overall-status" aria-live="polite" role="region" aria-label="Szabad helyek összesítve">
+      <div class="overall-header">
+        <strong id="overall-title" class="overall-title">Szabad helyek összesítve</strong>
+        <div id="overall-percent" class="overall-percent">—</div>
+      </div>
+
+      <div id="status-track" class="status-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="overall-title">
+        <div id="status-fill" class="status-fill"></div>
+      </div>
+
+      <div id="overall-note" class="overall-note" aria-hidden="false"></div>
+    </div>
+
+    <main id="list" aria-live="polite">
+      <!-- cards injected here -->
+    </main>
+    <footer>
+      &copy; 2025 DKG – Adatok forrása: 
+        <a href="https://bkk.hu" target="_blank" rel="noopener noreferrer">BKK</a>
+    </footer>
+  </div>
+
+  <script>
+    // Configuration
+    const LOCAL_JSON = 'parking-status.json';
+    const FALLBACK_URL = ''; // set to deployed URL if needed
+    const POLL_INTERVAL_MS = 30_000;
+    const FALLBACK_REFRESH_MS = 300_000;
+
+    // DOM refs
+    const list = document.getElementById('list');
+    const lastUpdated = document.getElementById('last-updated');
+    const status = document.getElementById('status');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const overallPercent = document.getElementById('overall-percent');
+    const statusFill = document.getElementById('status-fill');
+    const overallNote = document.getElementById('overall-note');
+    const statusTrack = document.getElementById('status-track');
+
+    // State
+    let lastSignature = null;
+    let pollTimer = null;
+    let consecutivePollErrors = 0;
+
+    // Helpers
+    function normalizeUpdated(ts) {
+      if (!ts) return '';
+      if (ts.includes('T') || ts.endsWith('Z')) return ts;
+      return ts.replace(' ', 'T');
+    }
+
+    function parseToDate(ts) {
+      if (!ts) return null;
+      const s = normalizeUpdated(ts);
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return null;
+      return d;
+    }
+
+    function timeDiffString(fromDate, toDate) {
+      if (!fromDate || !toDate) return '';
+      let diff = Math.floor((fromDate.getTime() - toDate.getTime()) / 1000); // seconds
+      const absDiff = Math.abs(diff);
+      if (absDiff < 10) return 'most';
+      if (absDiff < 60) return `${absDiff} mp`;
+      const minutes = Math.floor(absDiff / 60);
+      if (minutes < 60) return `${minutes} perc`;
+      const hours = Math.floor(minutes / 60);
+      const remMinutes = minutes % 60;
+      if (hours < 24) return remMinutes ? `${hours} óra ${remMinutes} perc` : `${hours} óra`;
+      const days = Math.floor(hours / 24);
+      if (days < 30) return `${days} nap`;
+      const months = Math.floor(days / 30);
+      if (months < 12) return `${months} hó`;
+      const years = Math.floor(months / 12);
+      return `${years} év`;
+    }
+
+    function hungarianAgo(diffStr) {
+      if (!diffStr) return '';
+      if (diffStr === 'most') return 'most';
+      if (diffStr.endsWith(' mp')) {
+        const n = diffStr.replace(' mp', '');
+        return `${n} másodperccel ezelőtt`;
+      }
+      if (diffStr.endsWith(' perc')) {
+        const n = diffStr.replace(' perc', '');
+        return `${n} perccel ezelőtt`;
+      }
+      if (diffStr.includes(' óra')) {
+        const parts = diffStr.split(' óra');
+        const hours = parts[0].trim();
+        const rest = parts[1].trim();
+        if (!rest) return `${hours} órával ezelőtt`;
+        const minutesMatch = rest.match(/(\d+)\s*perc/);
+        if (minutesMatch) {
+          return `${hours} órával ${minutesMatch[1]} perccel ezelőtt`;
+        }
+        return `${hours} órával ezelőtt`;
+      }
+      return `${diffStr} ezelőtt`;
+    }
+
+    function formatForDisplay(ts) {
+      if (!ts) return '';
+      const d = parseToDate(ts);
+      if (!d) return ts;
+      return d.toLocaleString();
+    }
+
+    function createCard(item, refreshTime) {
+      const freePct = item.total ? (item.free / item.total * 100) : 0;
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('role','article');
+
+      const left = document.createElement('div');
+      left.className = 'left';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = item.label;
+
+      const barWrap = document.createElement('div');
+      barWrap.className = 'bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const fill = document.createElement('div');
+      fill.className = 'fill';
+      fill.style.width = freePct + '%';
+
+      const pctText = document.createElement('div');
+      pctText.className = 'pct';
+      pctText.textContent = freePct.toFixed(1) + '%';
+
+      bar.appendChild(fill);
+      barWrap.appendChild(bar);
+      barWrap.appendChild(pctText);
+
+      left.appendChild(label);
+      left.appendChild(barWrap);
+
+      const numbers = document.createElement('div');
+      numbers.className = 'numbers';
+      const count = document.createElement('div');
+      count.className = 'count';
+      count.textContent = item.free;
+      count.setAttribute('aria-label', item.free + ' szabad hely');
+      const total = document.createElement('div');
+      total.className = 'total';
+      total.textContent = '/' + item.total;
+
+      const ts = document.createElement('div');
+      ts.className = 'timestamp';
+
+      const srcRaw = item.source_updated || item.updated || null;
+      const fetchedRaw = item.fetched_at || item.fetchedAt || null;
+
+      const fetchedDate = parseToDate(fetchedRaw) || refreshTime || new Date();
+      const srcDate = parseToDate(srcRaw);
+
+      const now = refreshTime || new Date();
+      const diffFetchedSource = srcDate ? timeDiffString(fetchedDate, srcDate) : null;
+      const srcRelative = diffFetchedSource ? hungarianAgo(diffFetchedSource) : null;
+
+      // Show only relative source age like "58 perccel ezelőtt"
+      ts.textContent = srcRelative ? srcRelative : '';
+
+      numbers.appendChild(count);
+      numbers.appendChild(total);
+      numbers.appendChild(ts);
+
+      card.appendChild(left);
+      card.appendChild(numbers);
+
+      return card;
+    }
+
+
+
+    function makeSignature(json) {
+      if (!Array.isArray(json)) return '';
+      return json
+        .slice()
+        .map(it => ({
+          id: it.id || '',
+          free: Number(it.free) || 0,
+          total: Number(it.total) || 0,
+          source_updated: normalizeUpdated(it.source_updated || it.updated || '')
+        }))
+        .sort((a,b) => (a.id || '').localeCompare(b.id || ''))
+        .map(it => `${it.id}|${it.free}|${it.total}|${it.source_updated || ''}`)
+        .join('||');
+    }
+
+      function render(data) {
+        // Normalize incoming payload to an array safely
+        const dataArray = Array.isArray(data)
+          ? data
+          : (data && Array.isArray(data.items) ? data.items : []);
+
+        if (!Array.isArray(data) && data && !Array.isArray(data.items)) {
+          console.warn('render: unexpected payload shape, using empty array. payload preview:', JSON.stringify(data).slice(0, 200));
+        }
+
+        const normalized = dataArray.map(it => ({
+          ...it,
+          source_updated: it.source_updated || it.updated || null,
+          fetched_at: it.fetched_at || it.fetchedAt || null
+        }));
+
+        normalized.sort((a, b) => (b.free || 0) - (a.free || 0));
+
+        // clear and render
+        list.innerHTML = '';
+        const refreshTime = new Date();
+
+        const itemsToRender = Array.isArray(normalized) ? normalized : [];
+        if (!Array.isArray(normalized)) {
+          console.warn('render: normalized is not an array, using empty list. preview:', JSON.stringify(normalized).slice(0,200));
+        }
+
+        itemsToRender.forEach(it => {
+          try {
+            const card = createCard(it, refreshTime);
+            if (card instanceof Node) list.appendChild(card);
+            else console.warn('createCard did not return a DOM node for item:', it);
+          } catch (err) {
+            console.error('Error creating card for item', it, err);
+          }
+        });
+
+        lastUpdated.textContent = 'Frissítve: ' + refreshTime.toLocaleString();
+
+        if (typeof updateOverallStatus === 'function') {
+          try {
+            updateOverallStatus(itemsToRender, refreshTime);
+          } catch (err) {
+            console.error('updateOverallStatus failed', err);
+          }
+        } else {
+          console.warn('updateOverallStatus is not defined');
+        }
+      }
+
+
+
+    function updateOverallStatus(data, refreshTime) {
+      if (!Array.isArray(data) || data.length === 0) {
+        overallPercent.textContent = '—';
+        statusFill.style.width = '0%';
+        overallNote.innerHTML = '';
+        if (statusTrack) statusTrack.setAttribute('aria-valuenow', '0');
+        return;
+      }
+
+      let totalSpaces = 0, totalFree = 0;
+      for (const p of data) {
+        totalSpaces += Number(p.total) || 0;
+        totalFree += Number(p.free) || 0;
+      }
+
+      const totalOccupied = Math.max(0, totalSpaces - totalFree);
+      const percentFree = totalSpaces > 0 ? Math.round((totalFree / totalSpaces) * 100) : 0;
+
+      overallPercent.textContent = percentFree + '%';
+      statusFill.style.width = percentFree + '%';
+      if (statusTrack) statusTrack.setAttribute('aria-valuenow', String(percentFree));
+
+      let latestFetched = null;
+      for (const it of data) {
+        const d = parseToDate(it.fetched_at || it.fetchedAt);
+        if (d && (!latestFetched || d > latestFetched)) latestFetched = d;
+      }
+      if (!latestFetched) latestFetched = refreshTime || new Date();
+
+      const latestDisplay = latestFetched ? latestFetched.toLocaleString() : (refreshTime || new Date()).toLocaleString();
+
+      overallNote.innerHTML = `
+        <div class="overall-summary">
+          <div class="free">Szabad: ${totalFree}</div>
+          <div class="occupied">Foglalt: ${totalOccupied}</div>
+        </div>
+        <div class="overall-meta">Utolsó rögzítés: ${latestDisplay}</div>
+      `;
+    }
+
+    // fetch helpers
+    function fetchWithTimeout(resource, options = {}) {
+      const { timeout = 8000 } = options;
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      return fetch(resource, { ...options, signal: controller.signal })
+        .finally(() => clearTimeout(id));
+    }
+
+    async function fetchJsonRaw(url) {
+      try {
+        const res = await fetchWithTimeout(url, { cache: 'no-store', timeout: 8000 });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const raw = await res.text();
+        let json;
+        try { json = JSON.parse(raw); } catch (e) { throw new Error('JSON parse error'); }
+        return { raw, json };
+      } catch (err) {
+        err.message = err.message || 'Failed to fetch';
+        throw err;
+      }
+    }
+
+    async function loadInitialFromLocal() {
+      status.textContent = 'Betöltés…';
+      refreshBtn.disabled = true;
+      try {
+        try {
+          const { raw, json } = await fetchJsonRaw(LOCAL_JSON);
+          lastSignature = makeSignature(json);
+          if (!Array.isArray(json)) throw new Error('Váratlan formátum');
+          render(json);
+          status.textContent = 'OK';
+          return;
+        } catch (localErr) {
+          console.warn('local fetch failed:', localErr.message);
+          if (FALLBACK_URL) {
+            try {
+              const { raw, json } = await fetchJsonRaw(FALLBACK_URL + '?t=' + Date.now());
+              lastSignature = makeSignature(json);
+              if (!Array.isArray(json)) throw new Error('Váratlan formátum (fallback)');
+              render(json);
+              status.textContent = 'OK (fallback)';
+              return;
+            } catch (remoteErr) {
+              console.warn('fallback fetch failed:', remoteErr.message);
+              throw remoteErr;
+            }
+          }
+          throw localErr;
+        }
+      } catch (err) {
+        console.error('initial load error', err);
+        status.textContent = 'Hiba';
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    async function pollLocalJson() {
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        const sig = makeSignature(json);
+        if (sig !== lastSignature) {
+          lastSignature = sig;
+          if (Array.isArray(json)) {
+            render(json);
+            status.textContent = 'OK';
+          } else {
+            console.warn('polled JSON not array, skipping render');
+          }
+        }
+        consecutivePollErrors = 0;
+      } catch (err) {
+        consecutivePollErrors++;
+        if (consecutivePollErrors <= 3) console.error('poll error', err);
+        status.textContent = 'Hiba';
+        if (consecutivePollErrors === 3 && FALLBACK_URL) {
+          try {
+            const { raw, json } = await fetchJsonRaw(FALLBACK_URL + '?t=' + Date.now());
+            const sig = makeSignature(json);
+            if (sig !== lastSignature) {
+              lastSignature = sig;
+              if (Array.isArray(json)) {
+                render(json);
+                status.textContent = 'OK (fallback)';
+              }
+            }
+            consecutivePollErrors = 0;
+          } catch (fallbackErr) {
+            console.warn('fallback poll failed', fallbackErr.message);
+          }
+        }
+      }
+    }
+
+    function startPolling() {
+      if (pollTimer) return;
+      pollLocalJson().catch(()=>{});
+      pollTimer = setInterval(pollLocalJson, POLL_INTERVAL_MS);
+    }
+
+    async function manualRefresh() {
+      status.textContent = 'Frissítés…';
+      refreshBtn.disabled = true;
+      try {
+        const { raw, json } = await fetchJsonRaw(LOCAL_JSON + '?t=' + Date.now());
+        lastSignature = makeSignature(json);
+        if (Array.isArray(json)) {
+          render(json);
+          status.textContent = 'OK';
+        } else {
+          status.textContent = 'Hiba';
+        }
+      } catch (err) {
+        console.error('manual refresh error', err);
+        if (FALLBACK_URL) {
+          try {
+            const { raw, json } = await fetchJsonRaw(FALLBACK_URL + '?t=' + Date.now());
+            lastSignature = makeSignature(json);
+            if (Array.isArray(json)) {
+              render(json);
+              status.textContent = 'OK (fallback)';
+            } else {
+              status.textContent = 'Hiba';
+            }
+          } catch (fallbackErr) {
+            console.error('manual fallback error', fallbackErr);
+            status.textContent = 'Hiba';
+          }
+        } else {
+          status.textContent = 'Hiba';
+        }
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadInitialFromLocal();
+      startPolling();
+      setInterval(manualRefresh, FALLBACK_REFRESH_MS);
+    });
+
+    refreshBtn.addEventListener('click', manualRefresh);
+
+    // touch pull-to-refresh
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; });
+    window.addEventListener('touchend', e => {
+      const dy = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY - touchStartY : 0;
+      if (dy > 80) manualRefresh();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+validate-release:
+	echo "Validating release..."
+	validate-release.sh
+	echo "Release validation complete."
+
+commit-changes:
+	echo "Committing changes..."
+	commit-workflow.sh
+	echo "Changes committed."

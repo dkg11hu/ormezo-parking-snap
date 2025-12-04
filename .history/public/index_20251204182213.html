@@ -32,7 +32,7 @@
   <main id="parking-grid" class="grid"></main>
 
 <script>
-  // relatív idő kiszámítása
+
   function timeDiffString(updated) {
     const now = new Date();
     const upd = new Date(updated.replace(" ", "T")); // ISO kompatibilis
@@ -43,56 +43,53 @@
     const diffH = Math.floor(diffMin / 60);
     if (diffH < 24) return diffH + " órája";
     const diffD = Math.floor(diffH / 24);
-    return diffD + " napja";
-  }
+  return diffD + " napja";
+}
 
-  function refreshParkingStatus() {
-    const url = "parking-status.json?ts=" + Date.now(); // cache-buster
-    console.log("Fetching:", url);
 
-    fetch(url)
-      .then(r => r.json())
-      .then(data => {
-        const grid = document.getElementById("parking-grid");
-        grid.innerHTML = "";
+function refreshParkingStatus() {
+  fetch("parking-status.json?ts=" + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      const grid = document.getElementById("parking-grid");
+      grid.innerHTML = "";
 
-        // report time a fejlécben
-        const reportTime = new Date();
-        document.getElementById("report-time").textContent =
-          "Jelentés ideje: " + reportTime.toLocaleString("hu-HU");
+      const reportTime = new Date();
+      document.getElementById("report-time").textContent =
+        "Jelentés ideje: " + reportTime.toLocaleString("hu-HU");
 
-        data.forEach(entry => {
-          const percent = Math.round((entry.free / entry.total) * 100);
-          const relative = timeDiffString(entry.updated);
+      data.forEach(entry => {
+        const percent = Math.round((entry.free / entry.total) * 100);
+        const relative = timeDiffString(entry.updated);
 
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <div class="left">
-              <div class="label">${entry.label}</div>
-              <div class="bar-wrap">
-                <div class="bar">
-                  <div class="fill" style="width:${percent}%"></div>
-                </div>
-                <div class="pct">${percent}%</div>
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="left">
+            <div class="label">${entry.label}</div>
+            <div class="bar-wrap">
+              <div class="bar">
+                <div class="fill" style="width:${percent}%"></div>
               </div>
+              <div class="pct">${percent}%</div>
             </div>
-            <div class="numbers">
-              <div class="count">${entry.free}</div>
-              <div class="total">/${entry.total}</div>
-              <div class="timestamp">${relative}</div>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      })
-      .catch(err => console.error("Hiba a JSON betöltésekor:", err));
-  }
+          </div>
+          <div class="numbers">
+            <div class="count">${entry.free}</div>
+            <div class="total">/${entry.total}</div>
+            <div class="timestamp">${relative}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    })
+    .catch(err => console.error("Hiba a JSON betöltésekor:", err));
+}
 
   // onload + automatikus frissítés
   window.onload = () => {
     refreshParkingStatus();               // első betöltéskor lefut
-    setInterval(refreshParkingStatus, 10000); // frissítés 60 másodpercenként
+    setInterval(refreshParkingStatus, 20000); // frissítés 60 másodpercenként
   };
 </script>
 </body>

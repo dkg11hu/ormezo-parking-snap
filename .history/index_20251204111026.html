@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <base href="/ormezo-parking-snap/" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" sizes="64x64" href="/icons/favicon-64.png" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>P+R Parkoló Foglaltság</title>
+
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #111;
+      --muted: #666;
+      --accent: #1b8f3b;
+      --danger: #d32f2f;
+      --track-bg: #eee;
+      --card-bg: #fff;
+      --card-border: #e6e6e6;
+    }
+    html,body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; color:var(--text); background:var(--bg); }
+    .wrap { max-width:900px; margin:0 auto; padding:1rem; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem; }
+    h1 { margin:0; font-size:1.25rem; }
+    .meta { color:var(--muted); font-size:0.95rem; margin-top:0.25rem; }
+    #controls { display:flex; gap:0.5rem; align-items:center; }
+    button { padding:0.4rem 0.7rem; border-radius:6px; border:1px solid #ddd; background:#fafafa; cursor:pointer; }
+    button:disabled { opacity:0.6; cursor:default; }
+
+    .overall-status { margin-bottom:1rem; }
+    .overall-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+    .overall-title { font-size:1rem; }
+    .overall-percent { font-weight:700; color:var(--muted); }
+
+    .status-track { height:12px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
+    .status-fill { height:100%; width:0%; transition:width 300ms ease; }
+
+    .overall-note { margin-top:0.5rem; color:var(--muted); font-size:0.95rem; }
+
+    main#list { display:grid; gap:0.75rem; margin-bottom:1rem; }
+
+    .card { display:flex; justify-content:space-between; align-items:center; padding:0.6rem; border:1px solid var(--card-border); border-radius:8px; background:var(--card-bg); }
+    .left { display:flex; flex-direction:column; gap:0.5rem; min-width:0; }
+    .label { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar-wrap { display:flex; align-items:center; gap:0.5rem; }
+    .bar { width:220px; max-width:40vw; height:10px; background:var(--track-bg); border-radius:999px; overflow:hidden; }
+    .fill { height:100%; width:0%; transition:width 300ms ease; }
+    .pct { font-size:0.85rem; color:var(--muted); min-width:48px; text-align:right; }
+
+    .numbers { display:flex; flex-direction:column; align-items:flex-end; gap:0.25rem; min-width:6rem; }
+    .count { font-weight:700; font-size:1.1rem; }
+    .total { color:var(--muted); }
+    .timestamp { color:var(--muted); font-size:0.85rem; text-align:right; }
+
+    footer { color:var(--muted); font-size:0.9rem; text-align:center; margin-top:1rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>P+R Parkoló Foglaltság</h1>
+        <div class="meta" id="last-updated">Frissítve: —</div>
+      </div>
+      <div id="controls">
+        <button id="refreshBtn" aria-label="Frissítés">Frissít</button>
+        <div class="status" id="status" aria-hidden="true">—</div>
+      </div>
+    </header>
+
+    <div class="overall-status" aria-live="polite" role="region" aria-label="Szabad helyek összesítve">
+      <div class="overall-header">
+        <strong id="overall-title" class="overall-title">Szabad helyek összesítve</strong>
+        <div id="overall-percent" class="overall-percent">—</div>
+      </div>
+      <div id="status-track" class="status-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="overall-title">
+        <div id="status-fill" class="status-fill"></div>
+      </div>
+      <div id="overall-note" class="overall-note"></div>
+    </div>
+
+    <main id="list" aria-live="polite">
+      <!-- cards injected here -->
+    </main>
+
+    <footer>
+      &copy; 2025 DKG – Adatok forrása:
+      <a href="https://bkk.hu" target="_blank" rel="noopener noreferrer">BKK</a>
+    </footer>
+  </div>
+
+  <script>
+  async function updateStatus() {
+    try {
+      const res = await fetch("parking-status.json?cb=" + Date.now());
+      const data = await res.json();
+
+      // Frissítve (frontend idő)
+      const lastRefresh = new Date().toLocaleString("hu-HU");
+      document.getElementById("last-updated").textContent =
+        "Frissítve: " + lastRefresh;
+
+      // Összesített számítás
+      let totalFree = 0, totalSpaces = 0;
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      data.lots.forEach(lot => {
+        totalFree += lot.free;
+        totalSpaces += lot.total;
+
+        const percent = Math.round((lot.free / lot.total) * 100);
+
+        // Szín logika per-parkoló
+        let color = "var(--accent)"; // zöld
+        if (percent < 10) {
+          color = "var(--danger)";   // piros
+        } else if (percent < 20) {
+          color = "orange";          // narancs
+        }
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="left">
+            <div class="label">${lot.name}</div>
+            <div class="bar-wrap">
+              <div class="bar">
+                <div class="fill" style="width:${percent}%; background:${color}"></div>
+              </div>
+              <div class="pct">${percent}%</div>
+            </div>
+          </div>
+          <div class="numbers">
+            <div class="count">${lot.free}</div>
+            <div class="total">/${lot.total}</div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      // Összesített százalék
+      const overallPercent = Math.round((totalFree / totalSpaces) * 100);
+      document.getElementById("overall-percent").textContent = overallPercent + "%";
+      document.getElementById("status-fill").style.width = overallPercent + "%";
+      document.getElementById("status-fill").style.background =
+        overallPercent < 10 ? "var(--danger)" :
+        overallPercent < 20 ? "orange" :
+        "var(--accent)";
+
+      document.getElementById("overall-note").textContent =
+        `Szabad helyek: ${totalFree} / ${totalSpaces}`;
+    } catch (err) {
+      console.error("Hiba a státusz frissítésénél:", err);
+      document.getElementById("status").textContent = "Hiba a frissítésnél";
+    }
+  }
+
+  // első futtatás
+  updateStatus();
+  // automatikus frissítés 60 másodpercenként
+  setInterval(updateStatus, 60000);
+  // manu

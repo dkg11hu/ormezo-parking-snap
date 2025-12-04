@@ -1,50 +1,30 @@
 [
   {
-    "id": "ormezo-p1",
+    "id": "p1",
     "label": "Őrmező P1 P+R parkoló",
-    "free": 5,
+    "free": 214,
     "total": 485,
-    "updated": "2025-12-03 14:23:29",
-    "original_updated": "2025-12-03 14:23:29",
-    "source_updated_iso": "2025-12-03T13:23:29.000Z",
-    "age_seconds": 136,
-    "age_human": "2m",
-    "fetched_at": "2025-12-03T13:25:45.285Z"
+    "updated": "2025-12-04 18:43:51"
   },
   {
-    "id": "ormezo-p2",
+    "id": "p2",
     "label": "Őrmező P2 P+R parkoló",
-    "free": 3,
+    "free": 158,
     "total": 500,
-    "updated": "2025-12-03 14:23:29",
-    "original_updated": "2025-12-03 14:23:29",
-    "source_updated_iso": "2025-12-03T13:23:29.000Z",
-    "age_seconds": 136,
-    "age_human": "2m",
-    "fetched_at": "2025-12-03T13:25:45.285Z"
+    "updated": "2025-12-04 18:43:51"
   },
   {
-    "id": "etele-p1",
+    "id": "p3",
     "label": "Etele P1 P+R parkoló",
-    "free": 2,
+    "free": 103,
     "total": 247,
-    "updated": "2025-12-03 14:23:29",
-    "original_updated": "2025-12-03 14:23:29",
-    "source_updated_iso": "2025-12-03T13:23:29.000Z",
-    "age_seconds": 136,
-    "age_human": "2m",
-    "fetched_at": "2025-12-03T13:25:45.285Z"
+    "updated": "2025-12-04 18:43:51"
   },
   {
-    "id": "etele-p2",
+    "id": "p4",
     "label": "Etele P2 P+R parkoló",
-    "free": 4,
+    "free": 110,
     "total": 221,
-    "updated": "2025-12-03 14:23:29",
-    "original_updated": "2025-12-03 14:23:29",
-    "source_updated_iso": "2025-12-03T13:23:29.000Z",
-    "age_seconds": 136,
-    "age_human": "2m",
-    "fetched_at": "2025-12-03T13:25:45.285Z"
+    "updated": "2025-12-04 18:43:51"
   }
 ]

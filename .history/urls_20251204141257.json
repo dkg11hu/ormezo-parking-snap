@@ -1,0 +1,50 @@
+[
+  {
+    "id": "p1",
+    "label": "Őrmező P1 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P121",
+    "maxLot": 485,
+    "selector": {
+      "xpath": "//td[@class='occupancy']"
+    },
+    "timestampSelector": {
+      "xpath": "//td[@class='last-update']"
+    }
+  },
+  {
+    "id": "p2",
+    "label": "Őrmező P2 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P131",
+    "maxLot": 320,
+    "selector": {
+      "xpath": "//td[@class='occupancy']"
+    },
+    "timestampSelector": {
+      "xpath": "//td[@class='last-update']"
+    }
+  },
+  {
+    "id": "p3",
+    "label": "Etele P1 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P101",
+    "maxLot": 400,
+    "selector": {
+      "xpath": "//td[@class='occupancy']"
+    },
+    "timestampSelector": {
+      "xpath": "//td[@class='last-update']"
+    }
+  },
+  {
+    "id": "p4",
+    "label": "Etele P2 P+R parkoló",
+    "url": "https://kozutfigyelo.budapestkozut.hu/list/pfhistory?id=P111",
+    "maxLot": 350,
+    "selector": {
+      "xpath": "//td[@class='occupancy']"
+    },
+    "timestampSelector": {
+      "xpath": "//td[@class='last-update']"
+    }
+  }
+]

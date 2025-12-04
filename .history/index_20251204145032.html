@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Parkoló státusz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root{
+      --bg:#f7f7f8;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent-start:#2ea44f;
+      --accent-end:#1b8f3a;
+      --gap:12px;
+      --radius:10px;
+      --max-width:980px;
+    }
+
+    html,body{height:100%;margin:0;background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    .wrap{max-width:var(--max-width);margin:0 auto;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 18px);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#111827;box-sizing:border-box}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    h1{font-size:1.05rem;margin:0 0 6px 0;line-height:1.15}
+    .meta{color:var(--muted);font-size:0.85rem}
+
+    /* Grid layout */
+    .grid {
+      display: grid;
+      gap: var(--gap);
+    }
+    @media screen and (orientation: portrait) {
+      .grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, auto); }
+    }
+    @media screen and (orientation: landscape) {
+      .grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, auto); }
+    }
+
+    .card{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border-radius:var(--radius);background:var(--card);box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+    .card .left{flex:1;min-width:0}
+    .label{font-weight:600;font-size:0.98rem;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar-wrap{display:flex;gap:8px;align-items:center}
+    .bar{background:#eef2f4;height:12px;width:160px;border-radius:8px;overflow:hidden;flex-shrink:0}
+    .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));transition:width 420ms cubic-bezier(.2,.8,.2,1);border-radius:8px 0 0 8px}
+    .pct{min-width:56px;text-align:right;font-size:0.9rem;color:var(--muted)}
+
+    .numbers{text-align:right;min-width:84px;color:#111827;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+    .count{font-weight:700;font-size:1rem}
+    .total{color:var(--muted);font-size:0.9rem}
+    .timestamp{color:var(--muted);font-size:0.82rem}
+
+    .overall-status{margin-bottom:10px}
+    .status-track{background:#f1f3f5;border-radius:8px;height:12px;overflow:hidden}
+    .status-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));transition:width 600ms ease;border-radius:8px 0 0 8px}
+    .overall-summary { display: flex; gap: 1rem; align-items: center; font-weight: 600; }
+    .overall-summary .free { color: #1b8f3b; }
+    .overall-summary .occupied { color: #d32f2f; }
+    .overall-meta { margin-top: 0.25rem; color: #555; font-weight: 400; font-size: 0.95rem; }
+  </style>
+
+  <script>
+    function refreshParkingStatus() {
+      fetch("parking-status.json")
+        .then(r => r.json())
+        .then(data => {
+          const grid = document.getElementById("parking-grid");
+          grid.innerHTML = "";
+
+          let totalFree = 0, totalLots = 0;
+
+          data.forEach(entry => {
+            totalFree += entry.free;
+            totalLots += entry.total;
+            const percent = Math.round((entry.free / entry.total) * 100);
+
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <div class="left">
+                <div class="label">${entry.label}</div>
+                <div class="bar-wrap">
+                  <div class="bar">
+                    <div class="fill" style="width:${percent}%"></div>
+                  </div>
+                  <div class="pct">${percent}%</div>
+                </div>
+              </div>
+              <div class="numbers">
+                <div class="count">${entry.free}</div>
+                <div class="total">/${entry.total}</div>
+                <div class="timestamp">${entry.updated}</div>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          // összesített státusz
+          const overallPct = Math.round((totalFree / totalLots) * 100);
+          document.querySelector(".status-fill").style.width = overallPct + "%";
+          document.querySelector(".overall-summary .free").textContent = totalFree;
+          document.querySelector(".overall-summary .occupied").textContent = totalLots - totalFree;
+          document.querySelector(".overall-meta").textContent = "Összes férőhely: " + totalLots;
+        })
+        .catch(err => console.error("Hiba a JSON betöltésekor:", err));
+    }
+    window.onload = refreshParkingStatus;
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Parkoló státusz</h1>
+        <div class="meta">Automatikus frissítés betöltéskor</div>
+      </div>
+    </header>
+
+    <!-- összesített státusz -->
+    <div class="overall-status">
+      <div class="overall-summary">
+        <div class="free">0</div> szabad
+        <div class="occupied">0</div> foglalt
+      </div>
+      <div class="overall-meta">Összes férőhely: 0</div>
+      <div class="status-track">
+        <div class="status-fill"></div>
+      </div>
+    </div>
+
+    <!-- parkolók listája -->
+    <main id="parking-grid" class="grid"></main>
+
+    <footer>
+      Adatok forrása: Budapest Közút
+    </footer>
+  </div>
+</body>
+</html>

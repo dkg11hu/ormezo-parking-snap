@@ -1,0 +1,13 @@
+# Makefile for ormezo-parking-snap
+
+.PHONY: validate-release commit-changes
+
+validate-release:
+    @echo "Validating release..."
+    @./validate-release.sh
+    @echo "Release validation complete."
+
+commit-changes:
+    @echo "Committing changes..."
+    @./commit-workflow.sh
+    @echo "Changes committed."
