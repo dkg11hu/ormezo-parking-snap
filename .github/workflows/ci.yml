@@ -1,0 +1,32 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Node and environment info
+        run: |
+          echo "Node version (from env): $NODE_VERSION"
+          echo "Run extractor on start: $RUN_EXTRACTOR_ON_START"
+      
+      - name: Debug secrets
+        run: |
+          echo "RENDER_API_KEY length: ${#RENDER_API_KEY}"
+          echo "RENDER_SERVICE_ID: $RENDER_SERVICE_ID"
+
+      - name: Trigger Render deploy
+        run: |
+          echo "Deploying ormezo-parking-snap using RENDER_API_KEY..."
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys
