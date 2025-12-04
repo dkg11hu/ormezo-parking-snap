@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <title>Parkoló státusz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./icons/favicon-192.png">
   <style>
     body { font-family: system-ui, sans-serif; background:#f7f7f8; margin:0; padding:20px; }
     h1 { font-size:1.2rem; margin-bottom:0.25rem; }
     .meta { color:#666; font-size:0.9rem; margin-bottom:1rem; }
+
     .grid { display:grid; gap:12px; }
-    @media (orientation:portrait) { .grid { grid-template-columns:1fr; } }
-    @media (orientation:landscape) { .grid { grid-template-columns:1fr 1fr; } }
+    @media (orientation:portrait) { .grid { grid-template-columns:1fr; grid-template-rows:repeat(4,auto); } }
+    @media (orientation:landscape) { .grid { grid-template-columns:1fr 1fr; grid-template-rows:repeat(2,auto); } }
+
     .card { background:#fff; padding:12px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
     .label { font-weight:600; margin-bottom:6px; }
     .bar-wrap { display:flex; gap:8px; align-items:center; }
@@ -57,44 +60,39 @@
       const grid = document.getElementById("parking-grid");
       grid.innerHTML = "";
 
-      // fejléc: frissítés dátuma + relatív idő
-      if (statusData.length > 0) {
-        const updated = statusData[0].updated;
-        const updDate = new Date(updated.replace(" ", "T"));
-        const relative = timeDiffString(updated);
-        document.getElementById("report-time").textContent =
-          "Frissítve: " + updDate.toLocaleString("hu-HU") + " (" + relative + ")";
-      }
+      const reportTime = new Date();
+      document.getElementById("report-time").textContent =
+        "Jelentés ideje: " + reportTime.toLocaleString("hu-HU");
 
-  statusData.forEach(entry => {
-    const percent = Math.round((entry.free / entry.total) * 100);
-    const relative = timeDiffString(entry.updated);
+    statusData.forEach(entry => {
+      const percent = Math.round((entry.free / entry.total) * 100);
+      const relative = timeDiffString(entry.updated);
 
-    const urlEntry = urlsData.find(u => u.id === entry.id);
-    const detailUrl = urlEntry ? urlEntry.url : "#";
+      // id alapján keresés
+      const urlEntry = urlsData.find(u => u.id === entry.id);
+      const detailUrl = urlEntry ? urlEntry.url : "#";
 
-    const card = document.createElement("a");
-    card.className = "card";
-    card.href = detailUrl;
-    card.target = "_blank"; // új ablakban nyílik meg
-    card.innerHTML = `
-      <div class="left">
-        <div class="label">${entry.label}</div>
-        <div class="bar-wrap">
-          <div class="bar">
-            <div class="fill" style="width:${percent}%"></div>
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="left">
+          <div class="label">${entry.label}</div>
+          <div class="bar-wrap">
+            <div class="bar">
+              <div class="fill" style="width:${percent}%"></div>
+            </div>
+            <div class="pct">${percent}%</div>
           </div>
-          <div class="pct">${percent}%</div>
         </div>
-      </div>
-      <div class="numbers">
-        <div class="count">${entry.free}</div>
-        <div class="total">/${entry.total}</div>
-        <div class="timestamp">${relative}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+        <div class="numbers">
+          <div class="count">${entry.free}</div>
+          <div class="total">/${entry.total}</div>
+          <div class="timestamp">${relative}</div>
+          <div class="details"><a href="${detailUrl}" target="_blank">Részletek</a></div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
     } catch (err) {
       console.error("Hiba a JSON betöltésekor:", err);
     }

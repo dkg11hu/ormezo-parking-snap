@@ -66,35 +66,35 @@
           "Frissítve: " + updDate.toLocaleString("hu-HU") + " (" + relative + ")";
       }
 
-  statusData.forEach(entry => {
-    const percent = Math.round((entry.free / entry.total) * 100);
-    const relative = timeDiffString(entry.updated);
+      statusData.forEach(entry => {
+        const percent = Math.round((entry.free / entry.total) * 100);
+        const relative = timeDiffString(entry.updated);
 
-    const urlEntry = urlsData.find(u => u.id === entry.id);
-    const detailUrl = urlEntry ? urlEntry.url : "#";
+        // id alapján keresés a urls.json-ben
+        const urlEntry = urlsData.find(u => u.id === entry.id);
+        const detailUrl = urlEntry ? urlEntry.url : "#";
 
-    const card = document.createElement("a");
-    card.className = "card";
-    card.href = detailUrl;
-    card.target = "_blank"; // új ablakban nyílik meg
-    card.innerHTML = `
-      <div class="left">
-        <div class="label">${entry.label}</div>
-        <div class="bar-wrap">
-          <div class="bar">
-            <div class="fill" style="width:${percent}%"></div>
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="left">
+            <div class="label">${entry.label}</div>
+            <div class="bar-wrap">
+              <div class="bar">
+                <div class="fill" style="width:${percent}%"></div>
+              </div>
+              <div class="pct">${percent}%</div>
+            </div>
           </div>
-          <div class="pct">${percent}%</div>
-        </div>
-      </div>
-      <div class="numbers">
-        <div class="count">${entry.free}</div>
-        <div class="total">/${entry.total}</div>
-        <div class="timestamp">${relative}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+          <div class="numbers">
+            <div class="count">${entry.free}</div>
+            <div class="total">/${entry.total}</div>
+            <div class="timestamp">${relative}</div>
+            <div class="details"><a href="${detailUrl}" target="_blank">Részletek</a></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
     } catch (err) {
       console.error("Hiba a JSON betöltésekor:", err);
     }
