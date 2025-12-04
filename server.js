@@ -132,6 +132,12 @@ app.post('/admin/run-extractor', async (req, res) => {
   }
 });
 
+// --- explicit index.html route ---
+// Serve index.html explicitly
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Serve static files from public/ (after API routes) with no caching for safety
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0 }));
 
