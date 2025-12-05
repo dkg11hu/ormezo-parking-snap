@@ -205,9 +205,10 @@ const shutdown = (signal) => {
       console.error('Error during server close', err);
       process.exit(1);
     }
-    if (extractor && !extractor.killed) {
-      try { extractor.kill('SIGINT'); } catch (e) { console.error('Error killing child process', e); }
-    }
+    if (child && !child.killed) {
+      try { child.kill('SIGINT'); } catch (e) { console.error('Error killing child process', e); }
+  }
+
     console.log('Server closed');
     process.exit(0);
   });
