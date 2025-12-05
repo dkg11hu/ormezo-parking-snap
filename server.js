@@ -7,6 +7,7 @@ const express = require('express');
 const { spawn } = require('child_process');
 
 let extractorRunning = false;
+let child = null;
 
 // Load local env in development only
 if (process.env.NODE_ENV !== 'production') {
@@ -51,7 +52,7 @@ function runExtractor()
   }
   extractorRunning = true;
 
-  const child = spawn('node', ['extractor.js'], { stdio: ['ignore', 'pipe', 'pipe'] });
+  child = spawn('node', ['extractor.js'], { stdio: ['ignore', 'pipe', 'pipe'] });
 
   child.stdout.on('data', (data) => {
     process.stdout.write('[extractor] ' + data.toString());
