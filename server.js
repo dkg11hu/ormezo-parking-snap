@@ -6,6 +6,8 @@ const path = require('path');
 const express = require('express');
 const { spawn } = require('child_process');
 
+let extractorRunning = false;
+
 // Load local env in development only
 if (process.env.NODE_ENV !== 'production') {
   try {
@@ -40,7 +42,9 @@ app.use((req, res, next) => {
 // --- extractor runner ---
 let extractor = null;
 
-function runExtractor() {
+
+function runExtractor()
+ {
   if (extractorRunning) {
     console.log('[server] extractor already running, skipping new run');
     return;
