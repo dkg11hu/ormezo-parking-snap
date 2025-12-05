@@ -71,6 +71,11 @@ if (process.env.RUN_EXTRACTOR_ON_START === '1') {
   runExtractor();
 }
 
+// NEW: run extractor periodically every 5 minutes
+setInterval(() => {
+  console.log('[server] scheduled extractor run at', new Date().toISOString());
+  runExtractor();
+}, 5 * 60 * 1000);
 // --- API routes (defined before static middleware) ---
 
 // Health
@@ -112,6 +117,20 @@ app.get('/snapshot', (req, res) => {
     return res.status(500).json({ error: 'read error' });
   }
 });
+
+app.get('/live', (req, res) => {
+  const p = path.join(__dirname, 'public', 'parking-status.json');
+  if (!fs.existsSync(p)) return res.status(404).json([]);
+  try {
+    const raw = fs.readFileSync(p, 'utf8');
+    return res.json(JSON.parse(raw));
+  } catch (e) {
+    console.error('[live] read error', e);
+    return res.status(500).json({ error: 'read error' });
+  }
+});
+
+
 
 // Admin endpoint to trigger extractor (protected by header secret)
 app.post('/admin/run-extractor', async (req, res) => {
