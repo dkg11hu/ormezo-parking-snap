@@ -218,4 +218,16 @@ const shutdown = (signal) => {
 };
 
 process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+//„graceful shutdown” logika kiegészítése
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, waiting for extractor...');
+  if (extractorRunning) {
+    child.on('close', () => {
+      console.log('Extractor finished, shutting down server');
+      server.close(() => process.exit(0));
+    });
+  } else {
+    server.close(() => process.exit(0));
+  }
+});
