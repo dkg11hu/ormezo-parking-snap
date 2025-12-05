@@ -64,16 +64,16 @@ function runExtractor()
   child.on('close', (code, signal) => {
     console.log(`[extractor] END code=${code} signal=${signal}`);
     extractorRunning = false;
-
-    // riport időpont hozzáadása
     try {
       const filePath = path.join(__dirname, 'public', 'parking-status.json');
       const raw = fs.readFileSync(filePath, 'utf8');
       const items = JSON.parse(raw);
 
       const reportTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      const wrapped = { report_time: reportTime, items };
-
+      const wrapped = {
+        report_time: reportTime,
+        items: items
+      };
       fs.writeFileSync(filePath, JSON.stringify(wrapped, null, 2));
       console.log('[server] parking-status.json updated with report_time', reportTime);
     } catch (err) {
