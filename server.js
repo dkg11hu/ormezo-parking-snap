@@ -41,30 +41,42 @@ app.use((req, res, next) => {
 let extractor = null;
 
 function runExtractor() {
-  if (extractor && !extractor.killed) {
-    console.log('Extractor already running, skipping new run');
+  if (extractorRunning) {
+    console.log('[server] extractor already running, skipping new run');
     return;
   }
-  console.log('Spawning extractor...');
-  extractor = spawn(process.execPath || 'node', [path.join(__dirname, 'extractor.js')], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env },
-    // keep attached so we can manage lifecycle from this process
-    detached: false
+  extractorRunning = true;
+
+  const child = spawn('node', ['extractor.js'], { stdio: ['ignore', 'pipe', 'pipe'] });
+
+  child.stdout.on('data', (data) => {
+    process.stdout.write('[extractor] ' + data.toString());
+  });
+  child.stderr.on('data', (data) => {
+    process.stderr.write('[extractor ERR] ' + data.toString());
   });
 
-  extractor.on('error', (err) => {
-    console.error('[extractor] spawn error', err);
-    extractor = null;
-  });
+  child.on('close', (code, signal) => {
+    console.log(`[extractor] END code=${code} signal=${signal}`);
+    extractorRunning = false;
 
-  extractor.stdout.on('data', (d) => console.log('[extractor]', d.toString().trim()));
-  extractor.stderr.on('data', (d) => console.error('[extractor ERR]', d.toString().trim()));
-  extractor.on('exit', (code, signal) => {
-    console.log(`extractor exited code=${code} signal=${signal}`);
-    extractor = null;
+    // riport időpont hozzáadása
+    try {
+      const filePath = path.join(__dirname, 'public', 'parking-status.json');
+      const raw = fs.readFileSync(filePath, 'utf8');
+      const items = JSON.parse(raw);
+
+      const reportTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const wrapped = { report_time: reportTime, items };
+
+      fs.writeFileSync(filePath, JSON.stringify(wrapped, null, 2));
+      console.log('[server] parking-status.json updated with report_time', reportTime);
+    } catch (err) {
+      console.error('[server] failed to wrap report_time:', err);
+    }
   });
 }
+
 
 // Optional: run on startup if enabled via env
 if (process.env.RUN_EXTRACTOR_ON_START === '1') {
