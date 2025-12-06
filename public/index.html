@@ -149,6 +149,7 @@
             "Frissítve: " + updDate.toLocaleString("hu-HU") + " (" + relative + ")";
         }
 
+        // itt a forEach már az items tömbön fut
         statusData.items.forEach(entry => {
           const percent = Math.round((entry.free / entry.total) * 100);
           const relative = timeDiffString(entry.updated);
@@ -161,27 +162,28 @@
           card.href = detailUrl;
           card.target = "_blank";
           card.innerHTML = `
-          <div class="left">
-            <div class="label">${entry.label}</div>
-            <div class="bar-wrap">
-              <div class="bar">
-                <div class="fill" style="width:${percent}%"></div>
-              </div>
-              <div class="pct">${percent}%</div>
+        <div class="left">
+          <div class="label">${entry.label}</div>
+          <div class="bar-wrap">
+            <div class="bar">
+              <div class="fill" style="width:${percent}%"></div>
             </div>
+            <div class="pct">${percent}%</div>
           </div>
-          <div class="numbers">
-            <div class="count">${entry.free}</div>
-            <div class="total">/${entry.total}</div>
-            <div class="timestamp">${relative}</div>
-          </div>
-        `;
+        </div>
+        <div class="numbers">
+          <div class="count">${entry.free}</div>
+          <div class="total">/${entry.total}</div>
+          <div class="timestamp">${relative}</div>
+        </div>
+      `;
           grid.appendChild(card);
         });
       } catch (err) {
         console.error("Hiba a JSON betöltésekor:", err);
       }
     }
+
 
     window.onload = () => {
       refreshParkingStatus();
