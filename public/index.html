@@ -140,17 +140,18 @@
         const grid = document.getElementById("parking-grid");
         grid.innerHTML = "";
 
+        const entries = statusData.items || []; // biztosítjuk, hogy mindig tömb legyen
+
         // fejléc: report_time + relatív idő
-        if (statusData.items && statusData.items.length > 0) {
-          const updated = statusData.report_time || statusData.items[0].updated;
+        if (entries.length > 0) {
+          const updated = statusData.report_time || entries[0].updated;
           const updDate = new Date(updated.replace(" ", "T"));
           const relative = timeDiffString(updated);
           document.getElementById("report-time").textContent =
             "Frissítve: " + updDate.toLocaleString("hu-HU") + " (" + relative + ")";
         }
 
-        // itt a forEach már az items tömbön fut
-        statusData.items.forEach(entry => {
+        entries.forEach(entry => {
           const percent = Math.round((entry.free / entry.total) * 100);
           const relative = timeDiffString(entry.updated);
 
