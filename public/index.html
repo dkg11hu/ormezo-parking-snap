@@ -134,24 +134,22 @@
           fetch("parking-status.json?ts=" + Date.now()),
           fetch("urls.json?ts=" + Date.now())
         ]);
-        const statusData = await statusRes.json();
+        const statusData = await statusRes.json(); // ez maga a tömb
         const urlsData = await urlsRes.json();
 
         const grid = document.getElementById("parking-grid");
         grid.innerHTML = "";
 
-        const entries = statusData.items || []; // biztosítjuk, hogy mindig tömb legyen
-
-        // fejléc: report_time + relatív idő
-        if (entries.length > 0) {
-          const updated = statusData.report_time || entries[0].updated;
+        // fejléc: az első elem updated mezője alapján
+        if (statusData.length > 0) {
+          const updated = statusData[0].updated;
           const updDate = new Date(updated.replace(" ", "T"));
           const relative = timeDiffString(updated);
           document.getElementById("report-time").textContent =
             "Frissítve: " + updDate.toLocaleString("hu-HU") + " (" + relative + ")";
         }
 
-        entries.forEach(entry => {
+        statusData.forEach(entry => {
           const percent = Math.round((entry.free / entry.total) * 100);
           const relative = timeDiffString(entry.updated);
 
@@ -184,7 +182,6 @@
         console.error("Hiba a JSON betöltésekor:", err);
       }
     }
-
 
     window.onload = () => {
       refreshParkingStatus();
